@@ -69,8 +69,9 @@ dates in the full paper's Data section — this package does not contain that pr
 
 ```
 Bhopal_Urban_Morphology_UMAP/
-├── README.md                          <- this file
-├── abstract_final.txt                 <- submission-ready abstract (250-300 words)
+├── README.md                              <- this file
+├── abstract_final.txt                     <- submission-ready abstract (250-300 words)
+├── Bhopal_Urban_Morphology_FullPaper_DRAFT.docx  <- full IEEE-format paper draft (see item 7)
 ├── data/
 │   ├── bhopal_umap_clusters.csv       <- 495-cell grid: coords, morphology indices, UMAP1/2, Cluster
 │   ├── Bhopal_umi-grid.csv            <- 495-cell grid: raw OBF/WSF overlay counts, UMI, UMI_w
@@ -80,9 +81,22 @@ Bhopal_Urban_Morphology_UMAP/
 │   ├── Bhopal_UMI_Grid.zip            <- shapefile: grid + UMI (QGIS project fields)
 │   ├── Local_Morans_I.zip             <- shapefile: LISA results (Z_score, p_value, q_value, p_fdr)
 │   └── shape2026072511713.zip         <- small boundary/reference shapefile (4 records only — verify what this is)
-└── docs/
-    ├── Machine_Learning.docx          <- original submitted abstract (AGERS-2026)
-    └── cluster_results_of_UMAP.docx   <- cluster interpretation notes
+├── docs/
+│   ├── Machine_Learning.docx          <- original submitted abstract (AGERS-2026)
+│   └── cluster_results_of_UMAP.docx   <- cluster interpretation notes
+├── figures/
+│   ├── fig1_data_integration_map.png  <- OBF/WSF/grid integration map (used as Fig. 1 in the paper)
+│   ├── fig2_umap_projection.png       <- UMAP cluster scatter plot (used as Fig. 2)
+│   └── fig3_local_morans_i_map.png    <- LISA cluster map (used as Fig. 3)
+├── scripts/
+│   └── build_paper.js                 <- docx-js script that generates the full paper draft
+└── validation/
+    ├── silhouette_validation.py       <- k=6 silhouette/Davies-Bouldin + k-scan (own data only)
+    ├── silhouette_per_cluster_umap.csv
+    ├── k_scan_silhouette.csv
+    ├── validation_summary.txt
+    ├── global_morans_i.py             <- global Moran's I + permutation test (own data only)
+    └── global_morans_i_summary.txt
 ```
 
 ## 6. Open items to resolve before the full paper
@@ -100,9 +114,37 @@ Bhopal_Urban_Morphology_UMAP/
    Urban Fabric, n=133) is the weakest-defined cluster (mean silhouette 0.31). The full
    paper must justify k=6 on interpretability grounds, not on "statistically optimal k" —
    that claim is not supported by this data. See `validation/validation_summary.txt`.
-5. Author name "Janki Parasd" appears in both source docs — verify spelling before final submission.
-6. Full data-validation pass not yet done — see the validation protocol added below before
-   any full-paper drafting begins.
+5. ~~Author name "Janki Parasd"~~ Resolved 22 Sep 2026 — confirmed as a typo against the
+   authors' own IEEE InGARSS-2026 manuscript template (same email, same institution):
+   correct form is **Dr. Janki Prasad**. Fixed in the full-paper draft.
+6. ~~Full data-validation pass~~ Partially resolved 22 Sep 2026 — silhouette/Davies-Bouldin
+   (item 4) and global Moran's I (item 8 below) are done. Feature-recomputation spot-check
+   and ground-truth imagery check (protocol items 2 and 5) are still open — cannot be done
+   from this package alone; raw building geometries are not included, only pre-aggregated
+   per-cell statistics.
+7. **First full-paper draft written** — `Bhopal_Urban_Morphology_FullPaper_DRAFT.docx`
+   (IEEE two-column, ~6 pages with 3 figures + 2 tables + 8 references). Built from
+   `scripts/build_paper.js` (docx-js). Two items are flagged directly in the document text
+   in red italics and must be filled in by the authors before submission:
+   - exact OBF dataset provider/version/vintage/access date
+   - UMAP hyperparameters (n_neighbors, min_dist, random_state)
+   Reference [6] (Ghosh 2019, Bhopal LULC) also needs volume/issue/page/DOI confirmed.
+   **Could not render a PDF preview in this sandbox** — LibreOffice fails to convert even
+   a trivial file here (environment issue, not a document defect). Structural validity was
+   confirmed instead via `python-docx` read-back (60 paragraphs, 3 tables, 3 images, all
+   8 references present and in order). Open in Word/Google Docs to visually check layout,
+   pagination, and figure placement before relying on it.
+8. **Global Moran's I computed** 22 Sep 2026 (`validation/global_morans_i.py`, own data
+   only, rook contiguity, row-standardized, 999-permutation significance test):
+   I = 0.4324, Z = 12.05, pseudo-p = 0.001 on the UMI surface — strong, highly significant
+   positive spatial autocorrelation city-wide, which is the necessary precondition for
+   interpreting the Local Moran's I (LISA) results in item 3 above as meaningful rather
+   than spurious local noise. See `validation/global_morans_i_summary.txt`.
+9. **Cross-validation between the two clustering methods**: 45 of 72 cells (62.5%) in the
+   K-Means Urban Core cluster (Cluster 2) also fall in the statistically significant LISA
+   High-High cluster — independent corroboration that this signature reflects real spatial
+   structure. Computed directly from `data/bhopal_umap_clusters.csv` + `data/Local_Morans_I.zip`.
+10. `shape2026072511713.zip` still unresolved (item 3 above, unchanged).
 
 ## 7. Data validation protocol (must run before full-paper drafting)
 

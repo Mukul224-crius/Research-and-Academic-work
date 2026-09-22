@@ -1,0 +1,14 @@
+Global Moran's I -- Urban Morphological Index (UMI), Bhopal
+Computed from data/Local_Morans_I.zip only (own project data)
+======================================================================
+
+n grid cells               : 423
+Spatial weights            : rook contiguity (4-neighbor), row-standardized
+Isolated cells (0 neighbors): 0
+
+Global Moran's I            : 0.4324
+Permutation test (n=999)    :
+  null mean I                : -0.0020
+  null std I                  : 0.0360
+  Z-score                     : 12.0480
+  pseudo p-value (one-sided)  : 0.0010
