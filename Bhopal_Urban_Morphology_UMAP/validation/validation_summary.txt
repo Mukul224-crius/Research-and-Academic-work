@@ -1,0 +1,30 @@
+Silhouette validation summary — Bhopal urban morphology clustering
+Computed from data/bhopal_umap_clusters.csv only (no external or synthetic data)
+===========================================================================
+
+1. UMAP-space silhouette (existing k=6 labels, n=495):
+   Overall silhouette score : 0.5669
+   Davies-Bouldin index     : 0.5544
+
+   Per-cluster mean silhouette:
+     Cluster 0: n=  70  mean silhouette=0.5770
+     Cluster 1: n=  73  mean silhouette=0.9830
+     Cluster 2: n=  72  mean silhouette=0.5923
+     Cluster 3: n=  62  mean silhouette=0.5769
+     Cluster 4: n=  85  mean silhouette=0.5779
+     Cluster 5: n= 133  mean silhouette=0.3077
+
+2. Raw-indicator-space silhouette (same labels, n=422 complete cells):
+   Overall silhouette score : 0.2291
+   Davies-Bouldin index     : 1.0904
+
+3. k-scan on UMAP embedding (k=2..10):
+   k= 2  silhouette=0.8436  inertia=   7215.72
+   k= 3  silhouette=0.5883  inertia=   2614.51
+   k= 4  silhouette=0.5516  inertia=   1497.84
+   k= 5  silhouette=0.5099  inertia=   1100.15
+   k= 6  silhouette=0.5669  inertia=    757.23  <-- k used in the paper
+   k= 7  silhouette=0.5784  inertia=    558.82
+   k= 8  silhouette=0.5803  inertia=    444.66
+   k= 9  silhouette=0.5979  inertia=    359.99
+   k=10  silhouette=0.5923  inertia=    312.87

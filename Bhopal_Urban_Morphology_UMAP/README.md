@@ -92,9 +92,14 @@ Bhopal_Urban_Morphology_UMAP/
    retired as unsourced.
 2. Confirm OBF and WSF dataset provenance (source, version, year, license) for the Data/Methods section.
 3. `shape2026072511713.zip` is a tiny 4-record shapefile of unclear purpose — confirm what it represents.
-4. No clustering validity metric (e.g., silhouette score) was found in the provided files —
-   compute and report one if the full paper needs it, or rely on the LISA spatial-coherence
-   check as the stated validation method (as done in the abstract).
+4. ~~No clustering validity metric~~ Resolved 22 Sep 2026 — see `validation/` folder.
+   **Important finding:** k=6 is NOT the silhouette-optimal k (k=9 and k=10 score higher
+   on the UMAP embedding: 0.598 and 0.592 vs. 0.567 for k=6), and the k=6 clusters score
+   much weaker in the raw untransformed indicator space (silhouette 0.229) than in the
+   UMAP-compressed space (0.567) — UMAP inflates apparent separation. Cluster 5 (Compact
+   Urban Fabric, n=133) is the weakest-defined cluster (mean silhouette 0.31). The full
+   paper must justify k=6 on interpretability grounds, not on "statistically optimal k" —
+   that claim is not supported by this data. See `validation/validation_summary.txt`.
 5. Author name "Janki Parasd" appears in both source docs — verify spelling before final submission.
 6. Full data-validation pass not yet done — see the validation protocol added below before
    any full-paper drafting begins.
