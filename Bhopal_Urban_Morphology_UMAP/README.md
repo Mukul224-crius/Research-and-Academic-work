@@ -15,7 +15,7 @@ re-derive full context in one shot instead of re-reading files one at a time.
 
 | Parameter | Value | Source |
 |---|---|---|
-| Building footprints (OBF) | 138,745 structures (as stated in prior drafts; raw per-cell sum in `bhopal_umap_clusters.csv` = 143,864 — **discrepancy not yet reconciled, verify before final paper**) | `bhopal_umap_clusters.csv` |
+| Building footprints (OBF) | 143,864 structures (raw per-cell sum of `fid_count` across all 495 grid cells in `bhopal_umap_clusters.csv`; supersedes the 138,745 figure used in earlier drafts, which is not reconcilable from any file in this package) | `bhopal_umap_clusters.csv` |
 | Analytical grid | 1 km x 1 km, 495 total cells | `bhopal_umap_clusters.csv`, `Bhopal_umi-grid.csv` |
 | Cells with valid morphology data | 423 of 495 | `Local_Morans_I` DBF |
 | Municipal grid extent | ~411.0 km2 (sum of cell `area_km2`) | `Bhopal_umi-grid.csv` |
@@ -87,10 +87,36 @@ Bhopal_Urban_Morphology_UMAP/
 
 ## 6. Open items to resolve before the full paper
 
-1. Reconcile 138,745 vs 143,864 building-count discrepancy.
+1. ~~Reconcile 138,745 vs 143,864 building-count discrepancy.~~ Resolved 22 Sep 2026 — using
+   143,864 (verified sum of `fid_count` across all 495 cells) going forward. 138,745 is
+   retired as unsourced.
 2. Confirm OBF and WSF dataset provenance (source, version, year, license) for the Data/Methods section.
 3. `shape2026072511713.zip` is a tiny 4-record shapefile of unclear purpose — confirm what it represents.
 4. No clustering validity metric (e.g., silhouette score) was found in the provided files —
    compute and report one if the full paper needs it, or rely on the LISA spatial-coherence
    check as the stated validation method (as done in the abstract).
 5. Author name "Janki Parasd" appears in both source docs — verify spelling before final submission.
+6. Full data-validation pass not yet done — see the validation protocol added below before
+   any full-paper drafting begins.
+
+## 7. Data validation protocol (must run before full-paper drafting)
+
+See the chat record for the full walkthrough. Summary of the four checks required:
+
+1. **Source data QA** — footprint geometry validity (no null/self-intersecting polygons,
+   no duplicates, plausible area range), boundary correctness (grid vs municipal limit
+   clip), and confirmed OBF/WSF vintage.
+2. **Feature computation QA** — recompute the 5 per-cell indicators independently
+   (e.g., in QGIS field calculator or a fresh Python script) and diff against
+   `bhopal_umap_clusters.csv` — spot-check at least 10-20 cells by hand.
+3. **Clustering validity** — compute a silhouette score (and/or Davies-Bouldin index) for
+   the k=6 K-Means solution on the UMAP embedding; justify k=6 against a scan of
+   k=3..10 (elbow/silhouette curve), and report UMAP hyperparameters used
+   (n_neighbors, min_dist, random_state) for reproducibility.
+4. **Spatial validation** — already partly done via Local Moran's I; still need the
+   global Moran's I value + its own p-value (tests whether the whole UMI surface
+   is autocorrelated, not just local hot/cold spots), and to fix the spatial weights
+   matrix definition (queen/rook contiguity, k-nearest, or distance band) explicitly.
+5. **External/independent check** — cross-check a sample of grid cells (e.g., the Urban
+   Core cluster) against Google/Bing satellite imagery or ground truth to confirm the
+   morphology labels are visually sensible, not just numerically self-consistent.
