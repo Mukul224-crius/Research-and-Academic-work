@@ -85,9 +85,11 @@ Bhopal_Urban_Morphology_UMAP/
 │   ├── Machine_Learning.docx          <- original submitted abstract (AGERS-2026)
 │   └── cluster_results_of_UMAP.docx   <- cluster interpretation notes
 ├── figures/
-│   ├── fig1_data_integration_map.png  <- OBF/WSF/grid integration map (used as Fig. 1 in the paper)
-│   ├── fig2_umap_projection.png       <- UMAP cluster scatter plot (used as Fig. 2)
-│   └── fig3_local_morans_i_map.png    <- LISA cluster map (used as Fig. 3)
+│   ├── fig1_data_integration_map.png  <- OBF/WSF/grid map, poster title cropped off (Fig. 1)
+│   ├── fig2_umap_projection.png       <- UMAP scatter, cropped to chart only, no code panel (Fig. 2)
+│   ├── fig3_local_morans_i_map.png    <- LISA cluster map (Fig. 3)
+│   ├── dashboard1_cluster_profile.png <- 6-panel cluster-stats dashboard, replaces plain Table I (Fig. 4)
+│   └── dashboard2_validation.png      <- 3-panel validation dashboard, replaces plain Table II (Fig. 5)
 ├── scripts/
 │   └── build_paper.js                 <- docx-js script that generates the full paper draft
 └── validation/
@@ -95,6 +97,7 @@ Bhopal_Urban_Morphology_UMAP/
     ├── silhouette_per_cluster_umap.csv
     ├── k_scan_silhouette.csv
     ├── validation_summary.txt
+    ├── build_dashboards.py            <- matplotlib script generating Fig. 4 and Fig. 5
     ├── global_morans_i.py             <- global Moran's I + permutation test (own data only)
     └── global_morans_i_summary.txt
 ```
@@ -167,3 +170,56 @@ See the chat record for the full walkthrough. Summary of the four checks require
 5. **External/independent check** — cross-check a sample of grid cells (e.g., the Urban
    Core cluster) against Google/Bing satellite imagery or ground truth to confirm the
    morphology labels are visually sensible, not just numerically self-consistent.
+
+## 8. Second full-paper revision (23 Sep 2026)
+
+Rebuilt per author review of the first draft:
+
+1. **Root-caused the missing/wrong UMAP figure**: the shared image cache slot `1.webp`
+   had been silently overwritten between turns (it now holds the unrelated AGERS-2026
+   CFP flyer) — that flyer is what got embedded as "Fig. 2" in the first draft. The
+   correct UMAP chart lives at `7.webp`. Fixed by cropping the chart region only
+   (excluding the Python code panel beneath it) directly from `7.webp`.
+2. **Cropped the poster-style title banner** off the OBF/WSF/grid integration figure
+   (Fig. 1) — it previously included a large decorative serif title line, which reads
+   as a conference-flyer/poster style, not an IEEE figure.
+3. **Removed all `HeadingLevel.*` styles.** The "triangle icons" seen before each
+   section heading are Word's normal collapsible-outline UI marker for any
+   heading-styled paragraph — not a document defect, but wrong for a print-style
+   draft. Fixed by using plain bold paragraphs with a bottom border instead of
+   built-in heading styles. **Keep doing this for any future docx-js build of this
+   kind of paper** — never use `HeadingLevel.*` for section titles here.
+4. **Replaced Table I and Table II with two matplotlib dashboard images**
+   (Fig. 4, Fig. 5), built from the dataviz skill's validated categorical palette
+   (fixed hue order, one hue per cluster, used consistently across every figure in
+   the paper) — `validation/build_dashboards.py`, own data only.
+5. **Added the full field-level formula derivation** (Methods, Section III-B),
+   reverse-deriving and numerically verifying every per-cell field against the
+   shapefile attribute tables rather than assuming them:
+   - Grid area, building count, total/mean/max/std footprint area, built-up
+     density, OBF%/obf_n — straightforward, directly matches stored fields.
+   - **UMI formula verified exactly**: `UMI = (obf_n + bld_n + wsf_n) / 3`,
+     confirmed against every one of the 423 valid cells.
+   - **UMI_w formula recovered** (new, beyond what was asked): ordinary
+     least-squares regression of `UMI_w` on `(obf_n, bld_n, wsf_n)` with no
+     intercept, across all 423 cells, gives weights **0.4 / 0.4 / 0.2** with a
+     maximum absolute residual of 0.00046 (i.e., essentially exact, not a rough
+     fit). Reported in the paper as an empirically recovered formula, explicitly
+     flagged as not source-confirmed, per the standing rule not to invent
+     unverified processing steps.
+   - WSF zonal-statistics expression and the original LISA shapefile's spatial-weights
+     definition remain explicitly flagged as unconfirmed — consistent with the
+     same rule, nothing was invented for those two.
+6. **Two Moran's I analyses are now kept explicitly distinct in the text**: the
+   original GIS-produced LISA map (spatial weights undocumented, flagged) vs. this
+   project's own independently computed global Moran's I (rook contiguity, row-
+   standardized, stated explicitly) — they are not guaranteed to share a weights
+   definition, so the paper no longer implies they do.
+7. **Added 4 more references** (12 total): Davies & Bouldin 1979 (Davies-Bouldin
+   index), Sirko et al. 2021 (Google Open Buildings / continental-scale building
+   detection), Getis & Ord 1992 (local spatial statistics), Moran 1950 (original
+   Moran's I). All verified via search, none fabricated.
+8. **Figures now span the full page width** using alternating two-column/one-column
+   continuous section breaks in the docx (`SectionType.CONTINUOUS`), instead of being
+   squeezed into a single narrow column — readable at print size.
+9. Title and author block are unchanged from the first draft, per author instruction.
