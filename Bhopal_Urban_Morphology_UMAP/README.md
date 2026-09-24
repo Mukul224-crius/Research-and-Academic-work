@@ -270,4 +270,24 @@ Author supplied answers for 3 of the remaining 6 flags, resolving them:
    all 423 cells) but the original QGIS expression/script is still not confirmed.
 3. Exact Bhopal-side institution name for the acknowledgment (which MP urban development
    authority).
-4. Ghosh (2019) reference — volume/issue/page/DOI still needed.
+4. Ghosh (2019) reference — volume/issue/page/DOI still needed. (Eq. numbers shifted:
+   UMI_w is now Eq. 13, not Eq. 11 — renumbered when equations were converted to
+   native Word math objects, see item 11 below.)
+
+## 11. Structural rework to match reference paper conventions (24 Sep 2026)
+
+Author supplied a co-author's own published IEEE paper (`IEEE_InGARSS_2026_conference_Manuscript.docx`,
+the Haldia LULC study) as a layout reference, with explicit instruction not to copy its
+content — only its structural conventions. Two changes made:
+
+1. **All 18 equations converted from unicode-text approximations to real embedded Word
+   equation objects** (native OMML via docx-js's `Math`/`MathFraction`/`MathSubScript`/
+   `MathRadical`/`MathSum` classes) — proper stacked fractions, roots, and summation
+   limits, matching how the reference paper embeds its equations, rather than plain
+   text with unicode math symbols. Verified: `document.xml` contains 18 well-formed
+   `<m:oMath>` elements, and python-docx reads the file back cleanly.
+2. **Figures batched onto one dedicated single-column page** near the end of the body
+   text (all 5 figures together, in order, right before References) instead of
+   interspersed after each section — matching the reference paper's page-5 figure
+   block convention. Body text (Intro through Acknowledgment) now runs continuously
+   in two columns with no more per-section one-column breaks for individual figures.

@@ -3,7 +3,31 @@ const {
   Document, Packer, Paragraph, TextRun, AlignmentType,
   Table, TableRow, TableCell, WidthType, ShadingType, BorderStyle,
   ImageRun, SectionType,
+  Math: OMath, MathRun, MathFraction, MathSubScript, MathSuperScript, MathRadical, MathSum,
 } = require("docx");
+
+// ---------- native Word equation (OMML) helpers ----------
+// Matches the senior co-author paper's convention of real embedded equation
+// objects (proper stacked fractions/roots/sums) rather than unicode-text
+// approximations of math.
+function T(text) { return new MathRun(text); }
+function SUB(baseText, subText) { return new MathSubScript({ children: [T(baseText)], subScript: [T(subText)] }); }
+function SUBc(baseChildren, subText) { return new MathSubScript({ children: baseChildren, subScript: [T(subText)] }); }
+function SUP(baseChildren, supText) { return new MathSuperScript({ children: baseChildren, superScript: [T(supText)] }); }
+function FRAC(numChildren, denChildren) { return new MathFraction({ numerator: numChildren, denominator: denChildren }); }
+function RAD(children) { return new MathRadical({ children }); }
+function SUMSUB(subText, bodyChildren) { return new MathSum({ subScript: [T(subText)], children: bodyChildren }); }
+function SUMSUBSUP(subText, supText, bodyChildren) { return new MathSum({ subScript: [T(subText)], superScript: [T(supText)], children: bodyChildren }); }
+function mathEq(mathChildren, num) {
+  return new Paragraph({
+    alignment: AlignmentType.CENTER,
+    spacing: { before: 60, after: 100 },
+    children: [
+      new OMath({ children: mathChildren }),
+      ...(num ? [new TextRun({ text: `    (${num})`, size: 20 })] : []),
+    ],
+  });
+}
 
 const FIG = "/home/user/Research-and-Academic-work/Bhopal_Urban_Morphology_UMAP/figures";
 const PAGE_W = 12240, PAGE_H = 15840, MARGIN = 1080;
@@ -199,44 +223,45 @@ const methodsChildren = [
   h2("B. Field-Level Definitions and Verified Formulas"),
   p("To keep every reported statistic traceable to the project's own attribute tables, each per-cell field used in this study is defined below and, where the underlying processing expression was not directly available, independently reverse-derived and numerically verified against the stored shapefile values rather than assumed."),
   p("1) Grid cell area: for a complete (non-boundary) cell,"),
-  eq("A_grid = 1 km × 1 km = 1,000,000 m²", "1"),
+  mathEq([SUB("A", "grid"), T(" = 1 km × 1 km = 1,000,000 "), SUP([T("m")], "2")], "1"),
   p("Boundary cells clipped by the municipal limit have smaller areas (field area_km2 ranges 0.001-0.999 km² in the grid attribute table)."),
   p("2) Building count per cell:"),
-  eq("BC_i = N_i", "2"),
+  mathEq([SUB("BC", "i"), T(" = "), SUB("N", "i")], "2"),
   p("where N_i is the number of OBF polygons within cell i; this is one of the five UMAP input variables."),
   p("3) Total and mean building footprint area:"),
-  eq("BA_i = Σⱼ A_iⱼ ,        Ā_i = BA_i / N_i", "3"),
-  p("where A_iⱼ is the footprint area of building j in cell i (field area_m2_su holds the aggregated sum)."),
+  mathEq([SUB("BA", "i"), T(" = "), SUMSUB("j", [SUB("A", "ij")])], "3"),
+  mathEq([SUB("Ā", "i"), T(" = "), FRAC([SUB("BA", "i")], [SUB("N", "i")])], "4"),
+  p("where A_ij is the footprint area of building j in cell i (field area_m2_su holds the aggregated sum)."),
   p("4) Maximum footprint area:"),
-  eq("A_max,i = max(A_i1, A_i2, …, A_iN)", "4"),
+  mathEq([SUBc([T("A"), T("max")], "i"), T(" = max("), SUB("A", "i1"), T(", "), SUB("A", "i2"), T(", …, "), SUB("A", "iN"), T(")")], "5"),
   p("5) Standard deviation of footprint area within a cell:"),
-  eq("SD_i = √[ Σⱼ(A_iⱼ − Ā_i)² / (N_i − 1) ]", "5"),
-  p("6) Built-up density, the ratio of summed footprint area to cell area:"),
-  eq("D_i = BA_i / A_grid,i   (×100 for percent)", "6"),
+  mathEq([SUB("SD", "i"), T(" = "), RAD([FRAC([SUMSUB("j", [SUP([T("("), SUB("A", "ij"), T(" − "), SUB("Ā", "i"), T(")")], "2")])], [T("("), SUB("N", "i"), T(" − 1)")])])], "6"),
+  p("6) Built-up density, the ratio of summed footprint area to cell area (×100 for percent):"),
+  mathEq([SUB("D", "i"), T(" = "), FRAC([SUB("BA", "i")], [SUBc([T("A"), T("grid")], "i")])], "7"),
   p("7) OBF percentage and its normalized form. OBF% is read directly from the grid attribute field obf_pct; obf_n was verified, across all 495 grid cells, to be a max-normalization of obf_pct rather than a simple percent-to-fraction conversion (max abs. residual 0.0005 against max-normalization vs. 0.47 against the percent/100 form, ruling the latter out):"),
-  eq("OBF%_i = (A_OBF,i / A_grid,i) × 100,     OBF_n,i = OBF%_i / max(OBF%)", "7"),
+  mathEq([SUBc([T("OBF%")], "i"), T(" = "), FRAC([SUBc([T("A"), T("OBF")], "i")], [SUBc([T("A"), T("grid")], "i")]), T(" × 100")], "8"),
+  mathEq([SUBc([T("OBF")], "n,i"), T(" = "), FRAC([SUBc([T("OBF%")], "i")], [T("max(OBF%)")])], "9"),
   p("with max(OBF%) = 53.151 (the dataset maximum, at grid cell id 671)."),
   p("8) Building-count normalization (bld_n), likewise verified as a max-normalization of the raw building count (fid_count) across all 423 populated cells (max abs. residual 0.0005):"),
-  eq("bld_n,i = fid_count_i / max(fid_count),   max(fid_count) = 1771", "8"),
+  mathEq([SUBc([T("bld")], "n,i"), T(" = "), FRAC([SUBc([T("fid_count")], "i")], [T("max(fid_count)")]), T(" ,   max(fid_count) = 1771")], "10"),
   p("9) WSF normalization (wsf_n), verified as a max-normalization of the mean WSF settlement-likelihood value (DN_mean) per cell across all 495 cells (max abs. residual 0.0005):"),
-  eq("WSF_n,i = DN_mean_i / max(DN_mean),   max(DN_mean) = 248.625", "9"),
+  mathEq([SUBc([T("WSF")], "n,i"), T(" = "), FRAC([SUBc([T("DN_mean")], "i")], [T("max(DN_mean)")]), T(" ,   max(DN_mean) = 248.625")], "11"),
   p("The corresponding QGIS Field Calculator expressions, as recalled by the authors, are \"obf_pct\" / maximum(\"obf_pct\"), \"fid_count\" / maximum(\"fid_count\"), and \"DN_mean\" / maximum(\"DN_mean\") respectively -- consistent with the independently verified mathematical form above."),
   p("10) Urban Morphological Index (UMI): verified against every one of the 423 valid grid cells in the delivered attribute table (e.g., cell id 247: obf_n=0.009, bld_n=0.009, wsf_n=0.988 → UMI=0.335 exactly as stored),"),
-  eq("UMI_i = (OBF_n,i + bld_n,i + WSF_n,i) / 3", "10"),
+  mathEq([SUB("UMI", "i"), T(" = "), FRAC([SUBc([T("OBF")], "n,i"), T(" + "), SUBc([T("bld")], "n,i"), T(" + "), SUBc([T("WSF")], "n,i")], [T("3")])], "12"),
   p("11) Weighted UMI (UMI_w): unlike UMI, this field is not a simple mean. We recovered its weighting by ordinary least-squares regression of UMI_w on (OBF_n, bld_n, WSF_n) with no intercept across all 423 valid cells, obtaining weights of 0.400, 0.400, and 0.200 respectively, with a maximum absolute residual of 0.00046 across every cell (consistent with field rounding rather than model error):"),
-  eq("UMI_w,i = 0.4·OBF_n,i + 0.4·bld_n,i + 0.2·WSF_n,i", "11"),
-  flag("Eq. (11) is an empirically recovered fit (n=423, max abs. residual 0.00046), not a value confirmed from the original processing script -- state this explicitly in the paper and, if possible, confirm against the source QGIS model before submission"),
+  mathEq([SUBc([T("UMI")], "w,i"), T(" = 0.4·"), SUBc([T("OBF")], "n,i"), T(" + 0.4·"), SUBc([T("bld")], "n,i"), T(" + 0.2·"), SUBc([T("WSF")], "n,i")], "13"),
+  flag("Eq. (13) is an empirically recovered fit (n=423, max abs. residual 0.00046), not a value confirmed from the original processing script -- state this explicitly in the paper and, if possible, confirm against the source QGIS model before submission"),
 
   h2("C. Standardization and Dimensionality Reduction"),
   p("The five morphology indicators (building count, density, mean/maximum/standard-deviation of footprint area) were z-score standardized across all grid cells,"),
-  eq("Z_ij = (X_ij − μ_j) / σ_j", "12"),
-  p("and projected into a two-dimensional embedding using UMAP [2], which preserves local neighbourhood structure,"),
-  eq("X (n×5) → Z (n×5) → Y (n×2)", "13"),
-  p("with hyperparameters n_neighbors=15, min_dist=0.10, n_components=2, metric=Euclidean, and random_state=42."),
+  mathEq([SUB("Z", "ij"), T(" = "), FRAC([T("("), SUB("X", "ij"), T(" − "), SUB("μ", "j"), T(")")], [SUB("σ", "j")])], "14"),
+  p("and projected into a two-dimensional embedding using UMAP [2], which preserves local neighbourhood structure, with hyperparameters n_neighbors=15, min_dist=0.10, n_components=2, metric=Euclidean, and random_state=42:"),
+  mathEq([T("X (n×5) → Z (n×5) → Y (n×2)")], "15"),
 
   h2("D. K-Means Clustering"),
   p("K-Means [5] with k=6 was applied to the UMAP embedding Y, minimizing the within-cluster sum of squares,"),
-  eq("min_{C_k} Σ_{k=1}^{K} Σ_{x_i ∈ C_k} ‖x_i − μ_k‖² ,  K=6", "14"),
+  mathEq([T("min "), SUMSUBSUP("k=1", "K", [SUMSUB("xᵢ∈Cₖ", [SUP([T("‖"), SUB("x", "i"), T(" − "), SUB("μ", "k"), T("‖")], "2")])]), T(" ,  K = 6")], "16"),
 
   h2("E. Cluster Validity Assessment"),
   p("The silhouette coefficient [7] and Davies-Bouldin index [8] were computed for the k=6 solution in two independent feature spaces -- the 2D UMAP embedding (n=495) and the original standardized five-indicator space (n=422 complete, non-singleton cells) -- to test whether cluster separation reflects genuine structure or is partly an artifact of the UMAP projection. A k-scan from k=2 to k=10 additionally refit K-Means on the same UMAP embedding at each k, recording the silhouette score."),
@@ -244,8 +269,18 @@ const methodsChildren = [
   h2("F. Spatial Autocorrelation Validation"),
   p("Two distinct Moran's I analyses are reported and are kept explicitly separate because they were not built with the same spatial-weights definition. First, a Local Moran's I (LISA) map was produced in the original GIS workflow (Fig. 3) using k-nearest-neighbor weights (k=5) and a 999-permutation significance test, classifying each cell into High-High, Low-High, Low-Low, or High-Low quadrants at p<0.05."),
   p("Second, and separately, as an independent validation check for this study, we computed a global Moran's I on the composite UMI surface using an explicitly defined rook (4-neighbor edge) contiguity matrix built directly from the regular grid's row and column indices, row-standardized, with significance likewise assessed via a 999-permutation test. Because the two analyses use different neighbourhood definitions (k=5 nearest-neighbor for the original LISA map vs. rook contiguity for this validation check), their results are complementary evidence rather than a single computation reported twice. The general form of Moran's I is [12], and of the local statistic [3], [11]:"),
-  eq("I = (n/W) · ΣᵢΣⱼ wᵢⱼ(xᵢ−x̄)(xⱼ−x̄) / Σᵢ(xᵢ−x̄)² ,  W=ΣᵢΣⱼwᵢⱼ", "15"),
-  eq("Iᵢ = zᵢ Σⱼ wᵢⱼ zⱼ ,  zᵢ = (xᵢ − x̄)/s", "16"),
+  mathEq([
+    T("I = "), FRAC([T("n")], [T("W")]), T(" · "),
+    FRAC(
+      [SUMSUB("i", [SUMSUB("j", [SUB("w", "ij"), T("("), SUB("x", "i"), T(" − x̄)("), SUB("x", "j"), T(" − x̄)")])])],
+      [SUMSUB("i", [SUP([T("("), SUB("x", "i"), T(" − x̄)")], "2")])]
+    ),
+    T(" ,  W = "), SUMSUB("i", [SUMSUB("j", [SUB("w", "ij")])]),
+  ], "17"),
+  mathEq([
+    SUB("I", "i"), T(" = "), SUB("z", "i"), T(" "), SUMSUB("j", [SUB("w", "ij"), T(" "), SUB("z", "j")]),
+    T(" ,  "), SUB("z", "i"), T(" = "), FRAC([T("("), SUB("x", "i"), T(" − x̄)")], [T("s")]),
+  ], "18"),
 ];
 
 // ================= Full-width figure section 1 (data integration map) =================
@@ -261,12 +296,6 @@ const resultsChildren = [
   p("The K-Means solution delineated six morphological signatures (Fig. 2, Fig. 4): Open Land/Water (Cluster 1, n=73), Sparse Peri-Urban Development (Cluster 4, n=85), Low-Density Residential (Cluster 0, n=70), Medium-Density Residential (Cluster 3, n=62), Compact Urban Fabric (Cluster 5, n=133), and Urban Core/High-Intensity Built-Up (Cluster 2, n=72). Cluster 2 recorded the highest mean building count (962.26 per grid cell) and density (0.32), consistent with a central business district / high-intensity core. Cluster 5 recorded the largest mean (416.92 m²), maximum (6674.99 m²), and most variable (735.70 m² standard deviation) footprint sizes, consistent with large institutional, commercial, or mixed-use structures (Fig. 4)."),
 ];
 
-const fig2Section = [
-  figureFull(`${FIG}/fig2_umap_projection.png`, 1402, 685, 9500000),
-  caption("Fig. 2. UMAP projection of the six urban morphological signature clusters."),
-  figureFull(`${FIG}/dashboard1_cluster_profile.png`, 2174, 1280, 9500000),
-  caption("Fig. 4. Cluster profile dashboard: (a) mean building count, (b) mean built-up density, (c) grid cells per cluster, (d) mean footprint area, (e) maximum footprint area, (f) standard deviation of footprint area, by cluster."),
-];
 
 const resultsChildren2 = [
   h2("B. Cluster Validity"),
@@ -280,7 +309,7 @@ const resultsChildren2 = [
   p("As independent corroboration linking the two analyses, 45 of the 72 grid cells assigned to the K-Means Urban Core cluster (62.5%) also fell within the significant LISA High-High cluster. This spatial correspondence between an attribute-space clustering (UMAP/K-Means) and a geography-based clustering (LISA), from entirely different statistical procedures, supports the interpretation that the Urban Core signature reflects genuine, non-random concentration of built form."),
 
   h2("D. Limitations"),
-  p("This analysis is cross-sectional and does not capture temporal morphological change. The 1 km grid risks an ecological-fallacy effect in which within-cell heterogeneity is averaged out. The k=6 solution was justified on interpretability rather than statistical optimality (Section IV-B). The UMI_w weighting (Eq. 11) remains an empirically recovered fit rather than a value confirmed from the original processing script, and the precise OBF data provenance (source, version, imagery vintage, access date; Section III-A) is still unconfirmed and required for the Data Availability statement. Cluster labels have not yet been validated against independent ground-truth imagery or socioeconomic data."),
+  p("This analysis is cross-sectional and does not capture temporal morphological change. The 1 km grid risks an ecological-fallacy effect in which within-cell heterogeneity is averaged out. The k=6 solution was justified on interpretability rather than statistical optimality (Section IV-B). The UMI_w weighting (Eq. 13) remains an empirically recovered fit rather than a value confirmed from the original processing script, and the precise OBF data provenance (source, version, imagery vintage, access date; Section III-A) is still unconfirmed and required for the Data Availability statement. Cluster labels have not yet been validated against independent ground-truth imagery or socioeconomic data."),
 
   h1("V. Conclusion"),
   p("This study developed and independently validated a machine-learning framework for grid-based urban morphological signature mapping in Bhopal, India, using Open Building Footprints and World Settlement Footprint data, with every derived field-level formula traced against the project's own attribute tables. Six morphological signatures were derived via UMAP and K-Means, and their validity was assessed using cluster-internal indices in two feature spaces and spatial-autocorrelation testing via global and local Moran's I under an explicit contiguity definition. We report both favourable results (global Moran's I=0.43, p=0.001; 62.5% spatial overlap between the Urban Core cluster and the LISA High-High hotspot) and unfavourable ones (weaker raw-space silhouette; k=6 not silhouette-optimal) transparently. This validated-and-caveated approach offers a replicable, low-cost method for morphology-based urban monitoring applicable to other data-scarce Indian cities, provided the confirmations flagged in Section IV-D are resolved in subsequent work."),
@@ -289,31 +318,44 @@ const resultsChildren2 = [
   p("The authors would like to thank the Commissioner of the Bhopal Municipal Corporation (BMC) and the Planning and Development Department of the concerned Madhya Pradesh urban development authority for providing the study area datasets, and also thank the GIS Lab of the Department of Geography, Faculty of Earth Science, IGNTU, India. The authors also thank the USGS and the Survey of India (SOI) for their freely available satellite images and datasets. The authors would also like to express sincere gratitude to the entire editorial board and reviewers for their insightful comments and suggestions, which have significantly improved the manuscript."),
   flag("confirm the exact Bhopal-side institution names/titles above (e.g., the specific MP urban development authority you actually obtained data from) before submission"),
 
+];
+
+const referencesSection = [
   h1("References"),
   ...refParas,
 ];
 
-const fig3Section = [
-  figureFull(`${FIG}/fig3_local_morans_i_map.png`, 2000, 1414, 9500000),
-  caption("Fig. 3. Local Moran's I (LISA) cluster map of the Urban Morphological Index (spatial-weights definition per Section III-F, to be confirmed)."),
-  figureFull(`${FIG}/dashboard2_validation.png`, 2374, 872, 9500000),
+// ================= All figures batched on one dedicated page =================
+// Matches the senior co-author paper's convention: figures grouped together
+// near the end of the body text rather than interspersed inline.
+const allFiguresSection = [
+  figureFull(`${FIG}/fig1_data_integration_map.png`, 2000, 1259, 6200000),
+  caption("Fig. 1. (a) 1 km analytical grid, (b) World Settlement Footprint (WSF) mask, and (c) Open Building Footprints (OBF), all clipped to the Bhopal Municipal Corporation boundary (UTM Zone 43N)."),
+  figureFull(`${FIG}/fig2_umap_projection.png`, 1402, 685, 6200000),
+  caption("Fig. 2. UMAP projection of the six urban morphological signature clusters."),
+  figureFull(`${FIG}/fig3_local_morans_i_map.png`, 2000, 1414, 6200000),
+  caption("Fig. 3. Local Moran's I (LISA) cluster map of the Urban Morphological Index (spatial-weights definition per Section III-F)."),
+  figureFull(`${FIG}/dashboard1_cluster_profile.png`, 2174, 1280, 6200000),
+  caption("Fig. 4. Cluster profile dashboard: (a) mean building count, (b) mean built-up density, (c) grid cells per cluster, (d) mean footprint area, (e) maximum footprint area, (f) standard deviation of footprint area, by cluster."),
+  figureFull(`${FIG}/dashboard2_validation.png`, 2374, 872, 6200000),
   caption("Fig. 5. Validation dashboard: (a) silhouette score by cluster in UMAP space, (b) silhouette score across k=2..10, (c) global Moran's I permutation test (observed vs. null distribution)."),
 ];
 
-// ================= Assemble document with alternating column sections =================
-// resultsChildren2[0..3]  = section B heading + its 3 paragraphs (silhouette discussion)
-// resultsChildren2[4..7]  = section C heading + its 3 paragraphs (spatial structure discussion)
-// resultsChildren2[8..]   = section D onward (Limitations, Conclusion, Acknowledgment, References)
+// ================= Assemble document =================
+// Body text runs continuously in two columns (Intro through Acknowledgment),
+// then all five figures are batched together on their own single-column
+// page, then References resume in two columns -- matching the senior
+// co-author paper's figure-batching convention.
 const finalDoc = new Document({
   sections: [
-    twoColSection(introChildren),
-    oneColSection(fig1Section),
-    twoColSection(methodsChildren),
-    twoColSection(resultsChildren),
-    oneColSection(fig2Section),
-    twoColSection(resultsChildren2.slice(0, 8)), // Section B + Section C text
-    oneColSection(fig3Section), // Fig. 3 (LISA map) + Fig. 5 (validation dashboard)
-    twoColSection(resultsChildren2.slice(8)), // Section D, Conclusion, Acknowledgment, References
+    twoColSection([
+      ...introChildren,
+      ...methodsChildren,
+      ...resultsChildren,
+      ...resultsChildren2,
+    ]),
+    oneColSection(allFiguresSection),
+    twoColSection(referencesSection),
   ],
 });
 
