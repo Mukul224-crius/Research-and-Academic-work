@@ -181,18 +181,18 @@ const keywordsPara = pRuns([
 
 // ================= References (12 total: original 8 + 4 new) =================
 const refs = [
-  "W. C. Jochem, D. R. Leasure, O. Pannell, H. R. Chamberlain, P. Jones, and A. J. Tatem, \"Classifying settlement types from multi-scale spatial patterns of building footprints,\" Environ. Plan. B: Urban Anal. City Sci., vol. 48, no. 5, pp. 1161-1179, 2021.",
-  "L. McInnes, J. Healy, and J. Melville, \"UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction,\" arXiv:1802.03426, 2018.",
-  "L. Anselin, \"Local Indicators of Spatial Association-LISA,\" Geogr. Anal., vol. 27, no. 2, pp. 93-115, 1995.",
-  "M. Marconcini et al., \"Outlining where humans live: the World Settlement Footprint 2015,\" Sci. Data, vol. 7, art. 242, 2020.",
-  "J. MacQueen, \"Some methods for classification and analysis of multivariate observations,\" in Proc. 5th Berkeley Symp. Math. Stat. Probab., vol. 1, pp. 281-297, 1967.",
+  "W. C. Jochem, D. R. Leasure, O. Pannell, H. R. Chamberlain, P. Jones, and A. J. Tatem, \"Classifying settlement types from multi-scale spatial patterns of building footprints,\" Environ. Plan. B: Urban Anal. City Sci., vol. 48, no. 5, pp. 1161-1179, 2021, doi: 10.1177/2399808320921208.",
+  "L. McInnes, J. Healy, and J. Melville, \"UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction,\" arXiv:1802.03426, 2018, doi: 10.48550/arXiv.1802.03426.",
+  "L. Anselin, \"Local Indicators of Spatial Association-LISA,\" Geogr. Anal., vol. 27, no. 2, pp. 93-115, 1995, doi: 10.1111/j.1538-4632.1995.tb00338.x.",
+  "M. Marconcini et al., \"Outlining where humans live: the World Settlement Footprint 2015,\" Sci. Data, vol. 7, art. 242, 2020, doi: 10.1038/s41597-020-00580-5.",
+  "J. MacQueen, \"Some methods for classification and analysis of multivariate observations,\" in Proc. 5th Berkeley Symp. Math. Stat. Probab., vol. 1, pp. 281-297, 1967. (No DOI -- pre-DOI-era conference proceedings.)",
   "S. Ghosh, \"A city growth and land-use/land-cover change: a case study of Bhopal, India,\" Model. Earth Syst. Environ., 2019. [AUTHOR TO CONFIRM volume/issue/page/DOI before submission]",
-  "P. J. Rousseeuw, \"Silhouettes: A graphical aid to the interpretation and validation of cluster analysis,\" J. Comput. Appl. Math., vol. 20, pp. 53-65, 1987.",
-  "D. L. Davies and D. W. Bouldin, \"A Cluster Separation Measure,\" IEEE Trans. Pattern Anal. Mach. Intell., vol. PAMI-1, no. 2, pp. 224-227, 1979.",
-  "W. Sirko et al., \"Continental-Scale Building Detection from High Resolution Satellite Imagery,\" arXiv:2107.12283, 2021.",
-  "National Commission on Population, Ministry of Health and Family Welfare, Government of India, \"Population Projections for India and States 2011-2036,\" Report of the Technical Group on Population Projections, 2020.",
-  "A. Getis and J. K. Ord, \"The Analysis of Spatial Association by Use of Distance Statistics,\" Geogr. Anal., vol. 24, no. 3, pp. 189-206, 1992.",
-  "P. A. P. Moran, \"Notes on Continuous Stochastic Phenomena,\" Biometrika, vol. 37, no. 1/2, pp. 17-23, 1950.",
+  "P. J. Rousseeuw, \"Silhouettes: A graphical aid to the interpretation and validation of cluster analysis,\" J. Comput. Appl. Math., vol. 20, pp. 53-65, 1987, doi: 10.1016/0377-0427(87)90125-7.",
+  "D. L. Davies and D. W. Bouldin, \"A Cluster Separation Measure,\" IEEE Trans. Pattern Anal. Mach. Intell., vol. PAMI-1, no. 2, pp. 224-227, 1979, doi: 10.1109/TPAMI.1979.4766909.",
+  "W. Sirko et al., \"Continental-Scale Building Detection from High Resolution Satellite Imagery,\" arXiv:2107.12283, 2021, doi: 10.48550/arXiv.2107.12283.",
+  "National Commission on Population, Ministry of Health and Family Welfare, Government of India, \"Population Projections for India and States 2011-2036,\" Report of the Technical Group on Population Projections, 2020. (No DOI -- government report.)",
+  "A. Getis and J. K. Ord, \"The Analysis of Spatial Association by Use of Distance Statistics,\" Geogr. Anal., vol. 24, no. 3, pp. 189-206, 1992, doi: 10.1111/j.1538-4632.1992.tb00261.x.",
+  "P. A. P. Moran, \"Notes on Continuous Stochastic Phenomena,\" Biometrika, vol. 37, no. 1/2, pp. 17-23, 1950, doi: 10.1093/biomet/37.1-2.17.",
 ];
 const refParas = refs.map((r, i) => new Paragraph({
   spacing: { after: 80 },
