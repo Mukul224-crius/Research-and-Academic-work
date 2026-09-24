@@ -201,9 +201,16 @@ const refParas = refs.map((r, i) => new Paragraph({
 }));
 
 // ================= Body sections (two-column) =================
-const introChildren = [
+// Title/authors/abstract/keywords must live in their own single-column
+// section. Placed inside a two-column section, the title paragraph gets
+// squeezed into just the first column's width instead of spanning the
+// full page -- that was the actual bug behind the "title concentrated on
+// the left side" problem.
+const titleBlockChildren = [
   title, authors, new Paragraph({ text: "" }), abstractHeading, p(abstractText), keywordsPara,
+];
 
+const introChildren = [
   h1("I. Introduction"),
   p("Rapid and often unplanned urban expansion in developing-country cities has outpaced the capacity of conventional planning instruments to monitor heterogeneous built-form change. Where land-use/land-cover (LULC) classification captures coarse functional categories, it does not, by itself, quantify the physical morphology of the built environment -- building density, footprint size, and their spatial variability -- that governs infrastructure loading, hazard exposure, and service delivery at the neighbourhood scale. This has motivated a shift toward data-driven approaches that classify settlement patterns directly from building-level geometry rather than from spectral land-cover classes alone [1]."),
   p("In India, the urban population is projected to rise from 31.8% in 2011 to 38.2% by 2036, with urban areas absorbing nearly three-fourths of the country's total population increase over this period [10]. This growth is concentrated disproportionately in peripheral and municipal land around Tier-II and Tier-III cities, which remain comparatively understudied relative to the country's major metropolitan regions. Bhopal, the capital of Madhya Pradesh, is representative of this transition: prior land-use/land-cover studies document substantial areal and morphological change in the city over recent decades [6], yet a quantitative, grid-based characterization of its internal morphological heterogeneity -- as distinct from a functional LULC classification -- has not been established."),
@@ -352,6 +359,7 @@ const finalDoc = new Document({
   // (Calibri/Aptos), which is what made the title/body look mismatched.
   styles: { default: { document: { run: { font: "Times New Roman" } } } },
   sections: [
+    oneColSection(titleBlockChildren),
     twoColSection([
       ...introChildren,
       ...methodsChildren,
