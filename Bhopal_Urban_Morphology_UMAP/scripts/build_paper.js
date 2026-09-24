@@ -141,7 +141,7 @@ const title = new Paragraph({
   spacing: { after: 200 },
   children: [new TextRun({
     text: "Machine Learning-Based Urban Morphological Signature Mapping Using Open Building Footprints and UMAP Clustering: A Grid-Based Assessment of Bhopal City, India",
-    bold: true, size: 30,
+    bold: true, size: 48, // 24pt, matching the reference paper's title size (was 15pt -- too small)
   })],
 });
 function authorBlock(name, dept, email, orcid) {
@@ -347,6 +347,10 @@ const allFiguresSection = [
 // page, then References resume in two columns -- matching the senior
 // co-author paper's figure-batching convention.
 const finalDoc = new Document({
+  // IEEE papers (and the reference senior-author paper) use Times New Roman
+  // throughout -- without this, Word falls back to its default theme font
+  // (Calibri/Aptos), which is what made the title/body look mismatched.
+  styles: { default: { document: { run: { font: "Times New Roman" } } } },
   sections: [
     twoColSection([
       ...introChildren,
