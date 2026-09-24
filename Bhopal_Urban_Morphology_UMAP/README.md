@@ -223,3 +223,26 @@ Rebuilt per author review of the first draft:
    continuous section breaks in the docx (`SectionType.CONTINUOUS`), instead of being
    squeezed into a single narrow column — readable at print size.
 9. Title and author block are unchanged from the first draft, per author instruction.
+
+## 9. Corrected normalization formulas (24 Sep 2026)
+
+The author independently derived (via a separate ChatGPT session) that `obf_n`, `bld_n`,
+and `wsf_n` are **max-normalizations**, not the simpler forms assumed in the first two
+paper drafts. This was verified directly against `data/Bhopal_umi-grid.csv` (all 495
+rows) before touching the paper — do not trust a derivation like this without checking
+it against the actual data file:
+
+| Field | Old (wrong) formula | Max err vs. old | Correct formula | Max err vs. correct |
+|---|---|---|---|---|
+| `obf_n` | `obf_pct / 100` | 0.468 | `obf_pct / max(obf_pct)`, max=53.151 | 0.0005 |
+| `bld_n` | *(not previously in the paper)* | — | `fid_count / max(fid_count)`, max=1771 | 0.0005 |
+| `wsf_n` | binary-mask fraction (conceptual, unverified) | — | `DN_mean / max(DN_mean)`, max=248.625 | 0.0005 |
+
+`UMI = mean(obf_n, bld_n, wsf_n)` and `UMI_w = 0.4·obf_n + 0.4·bld_n + 0.2·wsf_n` are
+unaffected by this correction (they consume obf_n/bld_n/wsf_n as inputs, whichever way
+those are computed) and remain as previously verified.
+
+The paper's Eq. (7)-(9) were rewritten with the correct formulas and the WSF
+"AUTHOR TO CONFIRM" flag was narrowed: the **mathematical form** of obf_n/bld_n/wsf_n
+is now verified to within rounding error, only the **literal QGIS expression syntax**
+remains unconfirmed.
