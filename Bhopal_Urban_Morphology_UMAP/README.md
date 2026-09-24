@@ -246,3 +246,28 @@ The paper's Eq. (7)-(9) were rewritten with the correct formulas and the WSF
 "AUTHOR TO CONFIRM" flag was narrowed: the **mathematical form** of obf_n/bld_n/wsf_n
 is now verified to within rounding error, only the **literal QGIS expression syntax**
 remains unconfirmed.
+
+## 10. Author-supplied confirmations (24 Sep 2026)
+
+Author supplied answers for 3 of the remaining 6 flags, resolving them:
+
+- **QGIS Field Calculator expressions** for obf_n/bld_n/wsf_n: `"obf_pct" / maximum("obf_pct")`,
+  `"fid_count" / maximum("fid_count")`, `"DN_mean" / maximum("DN_mean")` — matches the
+  independently verified math exactly. Added to Section III-B.
+- **UMAP hyperparameters**: n_neighbors=15, min_dist=0.10, n_components=2, metric=Euclidean,
+  random_state=42 — author states this is from the actual UMAP code (not independently
+  re-verified by Claude against a script, since none was provided). Added to Section III-C.
+- **Original LISA spatial weights**: k-nearest-neighbor, k=5, 999-permutation significance
+  test. This is **explicitly different** from the rook-contiguity weights used in this
+  project's own independently computed global Moran's I validation check — the paper
+  (Section III-F) now states both weight definitions side by side rather than implying
+  they match.
+
+**Still open (4 flags, unchanged):**
+1. Exact OBF dataset provider/version/imagery vintage/access date — still needed for the
+   Data Availability statement.
+2. UMI_w (Eq. 11) — formula is verified (0.4/0.4/0.2, matches to within rounding across
+   all 423 cells) but the original QGIS expression/script is still not confirmed.
+3. Exact Bhopal-side institution name for the acknowledgment (which MP urban development
+   authority).
+4. Ghosh (2019) reference — volume/issue/page/DOI still needed.
