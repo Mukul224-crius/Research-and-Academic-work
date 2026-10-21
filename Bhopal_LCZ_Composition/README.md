@@ -13,26 +13,30 @@ Authors: Mukul Maravi*, Janki Prasad, Bikash Das. Department of Geography, IGNTU
 Bhopal_LCZ_Composition/
 ├── Bhopal_LCZ_Composition_Paper_DRAFT.docx   <- full manuscript (A4, Times New Roman, APA 7)
 ├── data/
-│   ├── lcz_unique_values_report.csv          <- QGIS "Raster layer unique values report" (only data source)
+│   ├── lcz_unique_values_report.csv          <- QGIS unique-values report, LCZ layer (100 m, GEE export)
+│   ├── lulc2017_unique_values_report.csv     <- QGIS unique-values report, Esri LULC 2017 (10 m) cross-check layer
 │   └── stats_LCZ.xlsx                        <- author's earlier area table (cross-check)
 ├── scripts/
 │   ├── compute_statistics.py                 <- every statistic in the paper, from the CSV only
+│   ├── compute_lulc_statistics.py            <- LULC statistics + harmonised LCZ-vs-LULC comparison
 │   ├── build_figures.py                      <- Fig. 2 (workflow), Fig. 3 and Fig. 4 (dashboards)
+│   ├── build_fig5.py                         <- Fig. 5 (LCZ vs LULC cross-check dashboard)
 │   └── build_paper.js                        <- docx-js build; reads numbers from the JSON (no hand-typed values)
 ├── figures/                                   <- 300 dpi PNGs
 └── validation/
-    ├── lcz_statistics.json / .txt            <- computed statistics
+    ├── lcz_statistics.json / .txt            <- computed LCZ statistics
+    ├── lulc_statistics.json / .txt           <- computed LULC statistics and agreement metrics
     └── validate_manuscript.py                <- journal-rule and citation checks
 ```
 
-Rebuild: `python3 scripts/compute_statistics.py && python3 scripts/build_figures.py && NODE_PATH=$(npm root -g) node scripts/build_paper.js && python3 validation/validate_manuscript.py`
+Rebuild: `python3 scripts/compute_statistics.py && python3 scripts/compute_lulc_statistics.py && python3 scripts/build_figures.py && python3 scripts/build_fig5.py && NODE_PATH=$(npm root -g) node scripts/build_paper.js && python3 validation/validate_manuscript.py`
 
 ## Journal rules applied
 
 Rules come from the GIS Odyssey author guidelines, as quoted in search results; the site itself
 could not be reached from this sandbox.
-- 20,000–40,000 characters with spaces: the manuscript has **≈28,800**, so it passes.
-- File ≤ 2 MB: **0.95 MB**, so it passes. Abstract ≤ 20 lines (198 words). Keywords ≤ 5 (5). Equations are numbered (9).
+- 20,000–40,000 characters with spaces: the manuscript has **≈36,300**, so it passes.
+- File ≤ 2 MB: **1.24 MB**, so it passes. Abstract ≤ 20 lines (239 words, 18 lines when rendered). Keywords ≤ 5 (5). Equations are numbered (11).
 - Figures are 300 dpi. ORCID and affiliations are in footnotes.
 - **Still to do:** download the journal's own Word template and paste the text into it. Its exact fonts and margins could not be fetched.
 
@@ -42,6 +46,8 @@ could not be reached from this sandbox.
 2. The total pixel count (83,050) equals 302 × 275.
 3. The mean and SD from the frequency table, including 0 (5.54485 and 5.9331), **reproduce the values QGIS reports** for the layer.
 4. Every number in the abstract is checked automatically against `lcz_statistics.json`.
+
+5. For the 10 m LULC 2017 layer, valid pixels + NoData pixels = 2850 × 2550. Its mean (6.0001), median (7) and SD (2.2466) match the values obtained independently.
 
 Note: the valid area sums to 419.044 km². The earlier xlsx shows 419.045 because of rounding.
 
@@ -68,6 +74,12 @@ Crossref and doi.org are blocked in this sandbox, so no reference comes from mem
 | Intl | Demuzere et al. 2019, PLOS ONE 14(4) | 10.1371/journal.pone.0214474 | verified |
 | Intl | Demuzere et al. 2022, ESSD 14, 3835–3873 | 10.5194/essd-14-3835-2022 | verified |
 | Method | Shannon 1948; Simpson 1949 | listed in paper | verified |
+| Data | Karra et al. 2021, IGARSS 2021, pp. 4704–4707 (Esri 10 m LULC) | 10.1109/IGARSS47720.2021.9553499 | verified (DBLP + registry) |
+| Method | Lin 1991, IEEE Trans. Inf. Theory 37(1), 145–151 (Jensen–Shannon divergence) | 10.1109/18.61115 | verified (IEEE Xplore / Crossref record) |
+
+The LULC class codes were checked against the Planet and Sentinel Hub documentation for the
+Impact Observatory/Esri 9-class product: 1 Water, 2 Trees, 4 Flooded vegetation, 5 Crops, 7 Built area,
+8 Bare ground, 9 Snow/ice, 10 Clouds, 11 Rangeland. Values 3 and 6 are unused.
 
 The "5 Bhopal" group has a caveat. Only three Bhopal papers are explicitly LCZ-based (2023, 2025a and 2025b).
 Mistry & Mehrotra 2026 is a Bhopal heat study by the same LCZ research group. Dwivedi & Soni 2026
@@ -81,8 +93,11 @@ Rejected candidates had a DOI that could not be confirmed:
 
 ## Open items (red "AUTHOR TO CONFIRM" flags in the docx)
 
-1. Name and source of the boundary used for clipping. 419.04 km² here does not match the ≈411 km² grid in the UMAP paper.
-2. Exact global LCZ map version, Zenodo record and access date.
+1. Official name and source of the boundary ('Reproject'). Confirm that the LULC layer used the same boundary.
+   The LULC valid area (411.36 km²) matches the ≈411 km² grid of the UMAP paper. The LCZ area is 7.69 km² (1.87%) larger,
+   which is consistent with coarse 100 m pixels straddling the boundary.
+2. The version that the GEE collection `RUB/RUBCLIM/LCZ/global_lcz_map/latest` resolved to, the export date,
+   and the version/download source of the 2017 LULC layer.
 3. Confirm nearest-neighbour resampling during reprojection.
 4. Section 4.1: describe the spatial pattern from the final map, and paste the map into the reserved Fig. 1 box.
 5. Kotharkar, Bagade & Ramesh (2019): volume and article number.
