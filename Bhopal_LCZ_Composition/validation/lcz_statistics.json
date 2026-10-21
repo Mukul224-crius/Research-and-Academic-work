@@ -1,0 +1,281 @@
+{
+  "pixel_size_m": 95.1595,
+  "pixel_area_m2": 9055.330440249998,
+  "total_pixels": 83050,
+  "extent_km2": 752.0451930627623,
+  "zero_pixels": 36774,
+  "zero_km2": 333.00072160975344,
+  "zero_pct_of_extent": 44.279349789283565,
+  "valid_pixels": 46276,
+  "valid_km2": 419.0444714530089,
+  "n_classes": 13,
+  "absent_classes": [
+    1,
+    4,
+    7,
+    10
+  ],
+  "classes": [
+    {
+      "lcz": 2,
+      "name": "Compact mid-rise",
+      "pixels": 26,
+      "area_km2": 0.23543859144649995,
+      "pct": 0.0561846313423805,
+      "rank": 13,
+      "group": "Built"
+    },
+    {
+      "lcz": 3,
+      "name": "Compact low-rise",
+      "pixels": 4117,
+      "area_km2": 37.280795422509236,
+      "pct": 8.896620278330019,
+      "rank": 3,
+      "group": "Built"
+    },
+    {
+      "lcz": 5,
+      "name": "Open mid-rise",
+      "pixels": 45,
+      "area_km2": 0.4074898698112499,
+      "pct": 0.09724263116950471,
+      "rank": 12,
+      "group": "Built"
+    },
+    {
+      "lcz": 6,
+      "name": "Open low-rise",
+      "pixels": 14787,
+      "area_km2": 133.90117121997673,
+      "pct": 31.953928602299246,
+      "rank": 2,
+      "group": "Built"
+    },
+    {
+      "lcz": 8,
+      "name": "Large low-rise",
+      "pixels": 2121,
+      "area_km2": 19.206355863770245,
+      "pct": 4.5833693491226555,
+      "rank": 6,
+      "group": "Built"
+    },
+    {
+      "lcz": 9,
+      "name": "Sparsely built",
+      "pixels": 3700,
+      "area_km2": 33.504722628924995,
+      "pct": 7.9955052294926094,
+      "rank": 4,
+      "group": "Built"
+    },
+    {
+      "lcz": 11,
+      "name": "Dense trees (A)",
+      "pixels": 430,
+      "area_km2": 3.893792089307499,
+      "pct": 0.9292073645086005,
+      "rank": 8,
+      "group": "Land cover"
+    },
+    {
+      "lcz": 12,
+      "name": "Scattered trees (B)",
+      "pixels": 189,
+      "area_km2": 1.7114574532072495,
+      "pct": 0.40841905091191977,
+      "rank": 10,
+      "group": "Land cover"
+    },
+    {
+      "lcz": 13,
+      "name": "Bush, scrub (C)",
+      "pixels": 182,
+      "area_km2": 1.6480701401254996,
+      "pct": 0.39329241939666354,
+      "rank": 11,
+      "group": "Land cover"
+    },
+    {
+      "lcz": 14,
+      "name": "Low plants (D)",
+      "pixels": 16798,
+      "area_km2": 152.11144073531946,
+      "pct": 36.299593741896444,
+      "rank": 1,
+      "group": "Land cover"
+    },
+    {
+      "lcz": 15,
+      "name": "Bare rock or paved (E)",
+      "pixels": 346,
+      "area_km2": 3.1331443323264994,
+      "pct": 0.7476877863255251,
+      "rank": 9,
+      "group": "Land cover"
+    },
+    {
+      "lcz": 16,
+      "name": "Bare soil or sand (F)",
+      "pixels": 939,
+      "area_km2": 8.502955283394748,
+      "pct": 2.029129570403665,
+      "rank": 7,
+      "group": "Land cover"
+    },
+    {
+      "lcz": 17,
+      "name": "Water (G)",
+      "pixels": 2596,
+      "area_km2": 23.507637822888995,
+      "pct": 5.609819344800761,
+      "rank": 5,
+      "group": "Land cover"
+    }
+  ],
+  "code_stats_incl0": {
+    "n": 83050,
+    "min": 0.0,
+    "max": 17.0,
+    "mean": 5.544852498494882,
+    "median": 6.0,
+    "mode": 0.0,
+    "q1": 0.0,
+    "q3": 13.0,
+    "sd_pop": 5.933144916700249,
+    "sd_sample": 5.933180637341415,
+    "cv_pct": 107.00275468663531
+  },
+  "code_stats_excl0": {
+    "n": 46276,
+    "min": 2.0,
+    "max": 17.0,
+    "mean": 9.951162589679315,
+    "median": 9.0,
+    "mode": 14.0,
+    "q1": 6.0,
+    "q3": 14.0,
+    "sd_pop": 4.396399241563926,
+    "sd_sample": 4.396446744270467,
+    "cv_pct": 44.17975489741851
+  },
+  "class_area_stats_km2": {
+    "n": 13,
+    "mean": 32.23419011176991,
+    "median": 8.502955283394748,
+    "sd_pop": 48.90879844223909,
+    "sd_sample": 50.90589139597564,
+    "cv_pct": 151.72957121817262,
+    "min": 0.23543859144649995,
+    "max": 152.11144073531946,
+    "q1": 1.7114574532072495,
+    "q3": 33.504722628924995,
+    "skewness": 1.701597059002928,
+    "total": 419.0444714530089
+  },
+  "class_area_stats_pct": {
+    "n": 13,
+    "mean": 7.6923076923076925,
+    "median": 2.029129570403665,
+    "sd_pop": 11.671505478320968,
+    "sd_sample": 12.148088058401731,
+    "cv_pct": 151.7295712181726,
+    "min": 0.0561846313423805,
+    "max": 36.299593741896444,
+    "q1": 0.40841905091191977,
+    "q3": 7.9955052294926094,
+    "skewness": 1.7015970590029281,
+    "total": 100.0
+  },
+  "composition": {
+    "shannon_H": 1.6669010242726086,
+    "H_max_observed": 2.5649493574615367,
+    "H_max_17": 2.833213344056216,
+    "pielou_J_observed": 0.6498767780437961,
+    "pielou_J_17": 0.58834292439346,
+    "gini_simpson": 0.7459856709073038,
+    "inverse_simpson": 3.936785785163619,
+    "hill_N1": 5.295730999890228,
+    "berger_parker": 0.36299593741896446,
+    "gini_area": 0.6875336609107895,
+    "classes_to_80pct": 4,
+    "top2_share_pct": 68.25352234419569,
+    "shannon_built": 1.1192292409078748,
+    "shannon_landcover": 0.8113563234317512
+  },
+  "groups": {
+    "built_km2": 224.53597359643896,
+    "landcover_km2": 194.50849785656996,
+    "built_pct": 53.58285072175642,
+    "landcover_pct": 46.417149278243585,
+    "built_to_landcover_ratio": 1.1543761638733707,
+    "compact_km2": 37.51623401395574,
+    "open_km2": 134.308661089788,
+    "other_built_km2": 52.711078492695236,
+    "vegetation_km2": 159.3647604179597,
+    "bare_km2": 11.636099615721246,
+    "water_km2": 23.507637822888995,
+    "open_to_compact_ratio": 3.5800144822592332
+  },
+  "cumulative_share_by_rank": [
+    {
+      "lcz": 14,
+      "cum_pct": 36.299593741896444
+    },
+    {
+      "lcz": 6,
+      "cum_pct": 68.25352234419569
+    },
+    {
+      "lcz": 3,
+      "cum_pct": 77.1501426225257
+    },
+    {
+      "lcz": 9,
+      "cum_pct": 85.14564785201831
+    },
+    {
+      "lcz": 17,
+      "cum_pct": 90.75546719681907
+    },
+    {
+      "lcz": 8,
+      "cum_pct": 95.33883654594173
+    },
+    {
+      "lcz": 16,
+      "cum_pct": 97.3679661163454
+    },
+    {
+      "lcz": 11,
+      "cum_pct": 98.297173480854
+    },
+    {
+      "lcz": 15,
+      "cum_pct": 99.04486126717951
+    },
+    {
+      "lcz": 12,
+      "cum_pct": 99.45328031809144
+    },
+    {
+      "lcz": 13,
+      "cum_pct": 99.8465727374881
+    },
+    {
+      "lcz": 5,
+      "cum_pct": 99.94381536865761
+    },
+    {
+      "lcz": 2,
+      "cum_pct": 99.99999999999999
+    }
+  ],
+  "checks": {
+    "area_column_matches_pixel_count": true,
+    "total_pixels_matches_width_x_height": true,
+    "qgis_mean_reproduced": true,
+    "qgis_sd_reproduced": true
+  }
+}
