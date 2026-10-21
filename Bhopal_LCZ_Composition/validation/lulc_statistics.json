@@ -1,0 +1,148 @@
+{
+  "pixel_size_m": 10.0,
+  "total_pixels": 7267500,
+  "nodata_pixels": 3153916,
+  "extent_km2": 726.75,
+  "nodata_km2": 315.3916,
+  "valid_pixels": 4113584,
+  "valid_km2": 411.35839999999996,
+  "valid_pct": 56.602463020295836,
+  "n_classes": 7,
+  "classes": [
+    {
+      "value": 1,
+      "name": "Water",
+      "pixels": 283984,
+      "area_km2": 28.3984,
+      "pct": 6.903566330479699
+    },
+    {
+      "value": 2,
+      "name": "Trees",
+      "pixels": 87395,
+      "area_km2": 8.7395,
+      "pct": 2.1245463809660867
+    },
+    {
+      "value": 4,
+      "name": "Flooded vegetation",
+      "pixels": 31277,
+      "area_km2": 3.1277,
+      "pct": 0.7603345403910556
+    },
+    {
+      "value": 5,
+      "name": "Crops",
+      "pixels": 1642194,
+      "area_km2": 164.2194,
+      "pct": 39.92124629033952
+    },
+    {
+      "value": 7,
+      "name": "Built area",
+      "pixels": 1715671,
+      "area_km2": 171.5671,
+      "pct": 41.70745024290254
+    },
+    {
+      "value": 8,
+      "name": "Bare ground",
+      "pixels": 2141,
+      "area_km2": 0.2141,
+      "pct": 0.052047071361615564
+    },
+    {
+      "value": 11,
+      "name": "Rangeland",
+      "pixels": 350922,
+      "area_km2": 35.0922,
+      "pct": 8.530809143559486
+    }
+  ],
+  "code_stats": {
+    "n": 4113584,
+    "min": 1,
+    "max": 11,
+    "mean": 6.000076575560387,
+    "median": 7.0,
+    "mode": 7,
+    "q1": 5,
+    "q3": 7,
+    "sd_pop": 2.246620464921274,
+    "sd_sample": 2.2466207379946908,
+    "cv_pct": 37.443196543061575
+  },
+  "class_area_stats_km2": {
+    "n": 7,
+    "mean": 58.76548571428571,
+    "median": 28.3984,
+    "sd_pop": 70.05481913663714,
+    "sd_sample": 75.667852916401,
+    "cv_pct": 119.21082296033336,
+    "min": 0.2141,
+    "max": 171.5671,
+    "total": 411.35839999999996
+  },
+  "composition": {
+    "shannon_H": 1.248697643359706,
+    "pielou_J": 0.641703649043567,
+    "gini_simpson": 0.6541254241302865,
+    "inverse_simpson": 2.891221470920393,
+    "hill_N1": 3.485800244892314,
+    "berger_parker": 0.4170745024290254,
+    "gini_area": 0.5991265593631803
+  },
+  "harmonised": [
+    {
+      "group": "Built",
+      "lcz_classes": "LCZ 1\u201310",
+      "lulc_classes": "Built area (7)",
+      "lcz_km2": 224.53597359643896,
+      "lulc_km2": 171.5671,
+      "lcz_pct": 53.58285072175642,
+      "lulc_pct": 41.707450242902546,
+      "diff_pp": 11.875400478853877,
+      "ratio": 1.3087356118768632
+    },
+    {
+      "group": "Vegetated",
+      "lcz_classes": "LCZ 11\u201314",
+      "lulc_classes": "Trees, Flooded veg., Crops, Rangeland (2, 4, 5, 11)",
+      "lcz_km2": 159.3647604179597,
+      "lulc_km2": 211.1788,
+      "lcz_pct": 38.030512576713626,
+      "lulc_pct": 51.33693635525615,
+      "diff_pp": -13.306423778542523,
+      "ratio": 0.7546437446275843
+    },
+    {
+      "group": "Bare",
+      "lcz_classes": "LCZ 15\u201316",
+      "lulc_classes": "Bare ground (8)",
+      "lcz_km2": 11.636099615721246,
+      "lulc_km2": 0.2141,
+      "lcz_pct": 2.7768173567291896,
+      "lulc_pct": 0.05204707136161557,
+      "diff_pp": 2.724770285367574,
+      "ratio": 54.34890058720806
+    },
+    {
+      "group": "Water",
+      "lcz_classes": "LCZ 17",
+      "lulc_classes": "Water (1)",
+      "lcz_km2": 23.507637822888995,
+      "lulc_km2": 28.3984,
+      "lcz_pct": 5.609819344800761,
+      "lulc_pct": 6.903566330479699,
+      "diff_pp": -1.293746985678938,
+      "ratio": 0.8277803616713968
+    }
+  ],
+  "agreement": {
+    "proportional_overlap": 0.8539982923577855,
+    "dissimilarity_index": 0.14600170764221454,
+    "jensen_shannon_bits": 0.025279851098396536
+  },
+  "extent_difference_km2": 7.686071453008935,
+  "extent_difference_pct": 1.8684610434620847
+}

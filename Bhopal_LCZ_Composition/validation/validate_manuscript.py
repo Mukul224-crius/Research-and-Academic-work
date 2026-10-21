@@ -58,6 +58,12 @@ S = json.load(open(os.path.join(ROOT, "validation", "lcz_statistics.json")))
 for val in [f"{S['valid_km2']:.2f}", f"{S['composition']['shannon_H']:.3f}", f"{S['composition']['gini_area']:.3f}",
             f"{S['groups']['built_pct']:.2f}", f"{S['code_stats_excl0']['mean']:.2f}"]:
     check(val in abstract, f"abstract value {val} matches statistics file")
+U = json.load(open(os.path.join(ROOT, "validation", "lulc_statistics.json")))
+check(f"{U['agreement']['proportional_overlap']*100:.1f}" in abstract, "abstract LULC overlap matches statistics file")
+uc = U["code_stats"]
+check(round(uc["mean"], 4) == 6.0001 and uc["median"] == 7 and round(uc["sd_pop"], 4) == 2.2466,
+      "LULC mean/median/SD reproduce the independently reported 6.0001 / 7 / 2.2466")
+check(abs(U["valid_km2"] - 411.3584) < 1e-9, "LULC valid area = 411.3584 km2")
 flags = [p for p in paras if p.startswith("[AUTHOR TO CONFIRM")]
 print(f"INFO {len(flags)} author-to-confirm flags remain in the text")
 print(f"INFO {len(d.tables)} tables, {len(d.inline_shapes)} images")

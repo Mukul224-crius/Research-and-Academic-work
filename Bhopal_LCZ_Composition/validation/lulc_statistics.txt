@@ -1,0 +1,17 @@
+LULC 2017 (10 m): extent 726.7500 km2, valid 4113584 px = 411.3584 km2 (56.60%), NoData 315.3916 km2
+  1 Water                   283984    28.3984 km2   6.90%
+  2 Trees                    87395     8.7395 km2   2.12%
+  4 Flooded vegetation       31277     3.1277 km2   0.76%
+  5 Crops                  1642194   164.2194 km2  39.92%
+  7 Built area             1715671   171.5671 km2  41.71%
+  8 Bare ground               2141     0.2141 km2   0.05%
+ 11 Rangeland               350922    35.0922 km2   8.53%
+Codes: mean=6.0001 median=7.0 mode=7 Q1=5 Q3=7 SDpop=2.2466 SDsample=2.2466 CV=37.44%
+Class areas: n=7.000, mean=58.765, median=28.398, sd_pop=70.055, sd_sample=75.668, cv_pct=119.211, min=0.214, max=171.567, total=411.358
+Composition: shannon_H=1.2487, pielou_J=0.6417, gini_simpson=0.6541, inverse_simpson=2.8912, hill_N1=3.4858, berger_parker=0.4171, gini_area=0.5991
+Built      LCZ  224.536 km2 (53.58%)  LULC  171.567 km2 (41.71%)  diff +11.88 pp  ratio 1.309
+Vegetated  LCZ  159.365 km2 (38.03%)  LULC  211.179 km2 (51.34%)  diff -13.31 pp  ratio 0.755
+Bare       LCZ   11.636 km2 ( 2.78%)  LULC    0.214 km2 ( 0.05%)  diff  +2.72 pp  ratio 54.349
+Water      LCZ   23.508 km2 ( 5.61%)  LULC   28.398 km2 ( 6.90%)  diff  -1.29 pp  ratio 0.828
+Agreement: overlap=0.8540, dissimilarity=0.1460, JSD=0.0253 bits
+Valid extent LCZ - LULC = 7.686 km2 (1.87%)

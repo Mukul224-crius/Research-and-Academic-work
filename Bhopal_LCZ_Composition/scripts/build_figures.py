@@ -52,14 +52,14 @@ fig, ax = plt.subplots(figsize=(7.2, 3.6), dpi=DPI)
 ax.set_xlim(0, 100); ax.set_ylim(0, 50); ax.axis("off")
 W, H, X = 21, 13, [1, 26.5, 52, 77.5]
 boxes = [
-    (X[0], 31, "Global 100 m LCZ map\n(Demuzere et al., 2022)\nWUDAPT 17-class scheme"),
+    (X[0], 31, "Global 100 m LCZ map,\nLCZ_Filter band (GEE)\nexported at 100 m"),
     (X[1], 31, "Reprojection to\nWGS 84 / UTM 43N\n(95.16 m pixels)"),
     (X[2], 31, "Clip to Bhopal\nboundary; value 0\nset as background"),
     (X[3], 31, "Symbology with the\nstandard LCZ colour\nkey (QGIS 3.44)"),
     (X[3], 5, "Raster layer unique\nvalues report\n(pixel counts)"),
     (X[2], 5, "Class area (km², %);\nbuilt vs land-cover\naggregation"),
-    (X[1], 5, "Descriptive statistics\nof raster codes\nand class areas"),
-    (X[0], 5, "Composition indices:\nShannon, Pielou,\nSimpson, B–P, Gini"),
+    (X[1], 5, "Mean, median, SD;\nShannon, Simpson,\nB–P, Gini indices"),
+    (X[0], 5, "Cross-check with\nEsri LULC 2017 (10 m):\noverlap and JSD"),
 ]
 for i, (x, y, t) in enumerate(boxes):
     col = CAT[0] if i < 4 else CAT[2]
