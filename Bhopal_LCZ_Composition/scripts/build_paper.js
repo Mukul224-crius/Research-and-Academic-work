@@ -14,6 +14,8 @@ const {
 const ROOT = path.resolve(__dirname, "..");
 const FIG = path.join(ROOT, "figures");
 const S = JSON.parse(fs.readFileSync(path.join(ROOT, "validation", "lcz_statistics.json"), "utf8"));
+const R = S.raster;
+const m0 = (x) => Math.round(x).toLocaleString("en-US");
 const U = JSON.parse(fs.readFileSync(path.join(ROOT, "validation", "lulc_statistics.json"), "utf8"));
 const UC = U.code_stats, UA = U.class_area_stats_km2, UP = U.composition, AG = U.agreement;
 const ucls = (n) => U.classes.find((c) => c.value === n);
@@ -158,9 +160,9 @@ const intro = [
 // =====================================================================
 const studyArea = [
   h1("2. Study area"),
-  p(["Bhopal is the capital of Madhya Pradesh in central India and a tier-2 city with a composite climate (Mistry & Mehrotra, 2026). Its urban form combines a dense historic core, planned residential sectors and institutional campuses with large lakes and a rapidly expanding peri-urban fringe. The analysis covers the study-area raster clipped to the Bhopal boundary in WGS 84 / UTM zone 43N (EPSG:32643), whose rectangular extent spans 731,025–759,763 m E and 2,557,268–2,583,437 m N (302 × 275 pixels; ", `${f(S.extent_km2)} km²`, "). Within this rectangle, ", `${f(S.valid_km2)} km²`, " carry a valid LCZ code, and the remainder (", `${f(S.zero_km2)} km²; ${f(S.zero_pct_of_extent)}%`, ") lies outside the boundary and is coded 0 (Fig. 1)."]),
-  p(`The same boundary yields ${f(U.valid_km2, 4)} km² of valid pixels in the 10 m land-cover layer used for cross-checking (Section 3.7). The LCZ area is larger by ${f(U.extent_difference_km2)} km² (${f(U.extent_difference_pct)}%), which is consistent with the coarser LCZ pixels overlapping the boundary line.`),
-  flag("give the official name and source of the boundary layer ('Reproject' in QGIS and GEE), and confirm that the 10 m LULC layer was clipped with the same boundary."),
+  p(["Bhopal is the capital of Madhya Pradesh in central India and a tier-2 city with a composite climate (Mistry & Mehrotra, 2026). Its urban form combines a dense historic core, planned residential sectors and institutional campuses with large lakes and a rapidly expanding peri-urban fringe. The analysis covers the study-area raster clipped to the Bhopal boundary in WGS 84 / UTM zone 43N (EPSG:32643), whose rectangular extent spans ", `${m0(R.xmin)}–${m0(R.xmax)} m E and ${m0(R.ymin)}–${m0(R.ymax)} m N (${R.width} × ${R.height} pixels; ${f(S.extent_km2)} km²`, "). Within this rectangle, ", `${f(S.valid_km2)} km²`, " carry a valid LCZ code, and the remainder (", `${f(S.zero_km2)} km²; ${f(S.zero_pct_of_extent)}%`, ") lies outside the boundary and is coded 0 (Fig. 1)."]),
+  p(`The same boundary yields ${f(U.valid_km2, 4)} km² of valid pixels in the 10 m land-cover layer used for cross-checking (Section 3.7). The two valid areas differ by only ${f(Math.abs(U.extent_difference_km2))} km² (${f(Math.abs(U.extent_difference_pct))}%) despite a tenfold difference in pixel size, which confirms that both layers cover the same study area.`),
+  flag("give the official name and source of the boundary layer ('Reproject' in QGIS and GEE)."),
   new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 200, after: 80 }, keepNext: true, children: [] }),
   new Table({
     width: { size: 9000, type: WidthType.DXA }, alignment: AlignmentType.CENTER,
@@ -217,7 +219,7 @@ const methods = [
   mathEq([T("JSD="), FRAC([T("1")], [T("2")]), SUMS("g", "", [SUB("a", "g"), SUB("log", "2"), FRAC([SUB("a", "g")], [SUB("m", "g")])]), T("+"), FRAC([T("1")], [T("2")]), SUMS("g", "", [SUB("b", "g"), SUB("log", "2"), FRAC([SUB("b", "g")], [SUB("m", "g")])]), T(",   "), SUB("m", "g"), T("="), FRAC([SUB("a", "g"), T("+"), SUB("b", "g")], [T("2")])], 11),
   p("O ranges from 0 (no common composition) to 1 (identical composition), and JSD from 0 (identical) to 1. The two layers differ in class semantics, scale and date, so this comparison tests the consistency of the LCZ composition; it is not an accuracy assessment. The same areal statistics, raster-code statistics and composition indices (Sections 3.3–3.6) were computed for the LULC layer."),
   h2("3.8. Verification"),
-  p(["All statistics were computed with a Python script that reads only the QGIS frequency report. Three internal checks were passed: (i) the area column of the report equals pixel count × pixel area for every class; (ii) the total pixel count equals the raster dimensions (302 × 275 = 83,050); and (iii) the mean and SD computed from the frequency table including value 0 (", `${f(I0.mean, 5)} and ${f(I0.sd_pop, 4)}`, ") reproduce the values reported by QGIS for the layer (5.54485 and 5.9331). The same checks were applied to the LULC layer, whose valid and NoData pixels (", `${U.valid_pixels.toLocaleString("en-US")} + ${U.nodata_pixels.toLocaleString("en-US")}`, ") sum to its 2,850 × 2,550 dimensions; its code mean, median and SD reproduce the values obtained independently by the authors. The script, frequency tables and outputs are provided as supplementary material."]),
+  p(["All statistics were computed with a Python script that reads only the QGIS frequency report. Two internal checks were passed: (i) the area column of the report equals pixel count × pixel area for every class; and (ii) the total pixel count equals the raster dimensions (", `${R.width} × ${R.height} = ${S.total_pixels.toLocaleString("en-US")}`, "). The same checks were applied to the LULC layer, whose valid and NoData pixels (", `${U.valid_pixels.toLocaleString("en-US")} + ${U.nodata_pixels.toLocaleString("en-US")}`, ") sum to its 2,850 × 2,550 dimensions; its code mean, median and SD reproduce the values obtained independently by the authors. The script, frequency tables and outputs are provided as supplementary material."]),
 ];
 
 // =====================================================================

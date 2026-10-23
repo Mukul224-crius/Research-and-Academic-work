@@ -13,7 +13,9 @@ Authors: Mukul Maravi*, Janki Prasad, Bikash Das. Department of Geography, IGNTU
 Bhopal_LCZ_Composition/
 ├── Bhopal_LCZ_Composition_Paper_DRAFT.docx   <- full manuscript (A4, Times New Roman, APA 7)
 ├── data/
-│   ├── lcz_unique_values_report.csv          <- QGIS unique-values report, LCZ layer (100 m, GEE export)
+│   ├── lcz_unique_values_report.csv          <- QGIS unique-values report, LCZ_Clipped.tif (current LCZ layer)
+│   ├── lcz_raster_meta.json                  <- its size, extent and pixel size (read by compute_statistics.py)
+│   ├── lcz_unique_values_report_superseded_CLIP_LCZ.csv <- earlier CLIP_LCZ.tif report (no longer used)
 │   ├── lulc2017_unique_values_report.csv     <- QGIS unique-values report, Esri LULC 2017 (10 m) cross-check layer
 │   └── stats_LCZ.xlsx                        <- author's earlier area table (cross-check)
 ├── scripts/
@@ -35,21 +37,21 @@ Rebuild: `python3 scripts/compute_statistics.py && python3 scripts/compute_lulc_
 
 Rules come from the GIS Odyssey author guidelines, as quoted in search results; the site itself
 could not be reached from this sandbox.
-- 20,000–40,000 characters with spaces: the manuscript has **≈36,300**, so it passes.
-- File ≤ 2 MB: **1.24 MB**, so it passes. Abstract ≤ 20 lines (239 words, 18 lines when rendered). Keywords ≤ 5 (5). Equations are numbered (11).
+- 20,000–40,000 characters with spaces: the manuscript has **≈36,000**, so it passes.
+- File ≤ 2 MB: **1.23 MB**, so it passes. Abstract ≤ 20 lines (239 words, 18 lines when rendered). Keywords ≤ 5 (5). Equations are numbered (11).
 - Figures are 300 dpi. ORCID and affiliations are in footnotes.
 - **Still to do:** download the journal's own Word template and paste the text into it. Its exact fonts and margins could not be fetched.
 
 ## Data validation (all pass)
 
 1. For every class, the QGIS area column equals pixel count × 95.1595² m².
-2. The total pixel count (83,050) equals 302 × 275.
-3. The mean and SD from the frequency table, including 0 (5.54485 and 5.9331), **reproduce the values QGIS reports** for the layer.
+2. The total pixel count (80,969) equals 301 × 269.
+3. QGIS layer mean/SD were not supplied for LCZ_Clipped.tif. If you add them to `data/lcz_raster_meta.json`, the script checks them automatically. (The earlier CLIP_LCZ.tif reproduced QGIS exactly.)
 4. Every number in the abstract is checked automatically against `lcz_statistics.json`.
 
 5. For the 10 m LULC 2017 layer, valid pixels + NoData pixels = 2850 × 2550. Its mean (6.0001), median (7) and SD (2.2466) match the values obtained independently.
 
-Note: the valid area sums to 419.044 km². The earlier xlsx shows 419.045 because of rounding.
+Note: on 23 Oct 2026 the LCZ input was switched from CLIP_LCZ.tif (419.04 km² valid) to LCZ_Clipped.tif (411.49 km² valid). `data/stats_LCZ.xlsx` holds the old figures and is superseded.
 
 ## Reference verification log (21 Oct 2026)
 
@@ -94,8 +96,8 @@ Rejected candidates had a DOI that could not be confirmed:
 ## Open items (red "AUTHOR TO CONFIRM" flags in the docx)
 
 1. Official name and source of the boundary ('Reproject'). Confirm that the LULC layer used the same boundary.
-   The LULC valid area (411.36 km²) matches the ≈411 km² grid of the UMAP paper. The LCZ area is 7.69 km² (1.87%) larger,
-   which is consistent with coarse 100 m pixels straddling the boundary.
+   The LCZ valid area (411.49 km²) and the LULC valid area (411.36 km²) now differ by only 0.13 km² (0.03%). Both also match
+   the ≈411 km² grid of the UMAP paper, so all three use the same study area.
 2. The version that the GEE collection `RUB/RUBCLIM/LCZ/global_lcz_map/latest` resolved to, the export date,
    and the version/download source of the 2017 LULC layer.
 3. Confirm nearest-neighbour resampling during reprojection.

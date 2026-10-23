@@ -1,13 +1,28 @@
 {
   "pixel_size_m": 95.1595,
   "pixel_area_m2": 9055.330440249998,
-  "total_pixels": 83050,
-  "extent_km2": 752.0451930627623,
-  "zero_pixels": 36774,
-  "zero_km2": 333.00072160975344,
-  "zero_pct_of_extent": 44.279349789283565,
-  "valid_pixels": 46276,
-  "valid_km2": 419.0444714530089,
+  "total_pixels": 80969,
+  "extent_km2": 733.2010504166021,
+  "zero_pixels": 35527,
+  "zero_km2": 321.7087245507617,
+  "zero_pct_of_extent": 43.87728636885721,
+  "raster": {
+    "file": "D:/papers/LCZ/DLR/LCZ_Clipped.tif",
+    "band": 1,
+    "crs": "EPSG:32643 - WGS 84 / UTM zone 43N",
+    "pixel_size_m": 95.1595,
+    "width": 301,
+    "height": 269,
+    "xmin": 731110.5236863442,
+    "ymin": 2557602.1795025025,
+    "xmax": 759753.536523724,
+    "ymax": 2583200.087985078,
+    "qgis_mean": null,
+    "qgis_sd": null,
+    "note": "Replaces CLIP_LCZ.tif (302 x 275 px) on 23 Oct 2026 at the author's request. QGIS layer mean/SD not supplied for this file; set qgis_mean/qgis_sd here if obtained."
+  },
+  "valid_pixels": 45442,
+  "valid_km2": 411.4923258658404,
   "n_classes": 13,
   "absent_classes": [
     1,
@@ -21,7 +36,7 @@
       "name": "Compact mid-rise",
       "pixels": 26,
       "area_km2": 0.23543859144649995,
-      "pct": 0.0561846313423805,
+      "pct": 0.05721579155847014,
       "rank": 13,
       "group": "Built"
     },
@@ -30,7 +45,7 @@
       "name": "Compact low-rise",
       "pixels": 4117,
       "area_km2": 37.280795422509236,
-      "pct": 8.896620278330019,
+      "pct": 9.059900532546983,
       "rank": 3,
       "group": "Built"
     },
@@ -39,243 +54,242 @@
       "name": "Open mid-rise",
       "pixels": 45,
       "area_km2": 0.4074898698112499,
-      "pct": 0.09724263116950471,
+      "pct": 0.09902733154350601,
       "rank": 12,
       "group": "Built"
     },
     {
       "lcz": 6,
       "name": "Open low-rise",
-      "pixels": 14787,
-      "area_km2": 133.90117121997673,
-      "pct": 31.953928602299246,
+      "pixels": 14741,
+      "area_km2": 133.48462601972523,
+      "pct": 32.439153206284935,
       "rank": 2,
       "group": "Built"
     },
     {
       "lcz": 8,
       "name": "Large low-rise",
-      "pixels": 2121,
-      "area_km2": 19.206355863770245,
-      "pct": 4.5833693491226555,
+      "pixels": 2112,
+      "area_km2": 19.124857889807995,
+      "pct": 4.6476827604418816,
       "rank": 6,
       "group": "Built"
     },
     {
       "lcz": 9,
       "name": "Sparsely built",
-      "pixels": 3700,
-      "area_km2": 33.504722628924995,
-      "pct": 7.9955052294926094,
+      "pixels": 3609,
+      "area_km2": 32.680687558862246,
+      "pct": 7.941991989789182,
       "rank": 4,
       "group": "Built"
     },
     {
       "lcz": 11,
       "name": "Dense trees (A)",
-      "pixels": 430,
-      "area_km2": 3.893792089307499,
-      "pct": 0.9292073645086005,
+      "pixels": 415,
+      "area_km2": 3.757962132703749,
+      "pct": 0.9132520575678889,
       "rank": 8,
       "group": "Land cover"
     },
     {
       "lcz": 12,
       "name": "Scattered trees (B)",
-      "pixels": 189,
-      "area_km2": 1.7114574532072495,
-      "pct": 0.40841905091191977,
+      "pixels": 183,
+      "area_km2": 1.6571254705657497,
+      "pct": 0.40271114827692445,
       "rank": 10,
       "group": "Land cover"
     },
     {
       "lcz": 13,
       "name": "Bush, scrub (C)",
-      "pixels": 182,
-      "area_km2": 1.6480701401254996,
-      "pct": 0.39329241939666354,
+      "pixels": 167,
+      "area_km2": 1.5122401835217496,
+      "pct": 0.367501430394789,
       "rank": 11,
       "group": "Land cover"
     },
     {
       "lcz": 14,
       "name": "Low plants (D)",
-      "pixels": 16798,
-      "area_km2": 152.11144073531946,
-      "pct": 36.299593741896444,
+      "pixels": 16184,
+      "area_km2": 146.55146784500596,
+      "pct": 35.61462963778003,
       "rank": 1,
       "group": "Land cover"
     },
     {
       "lcz": 15,
       "name": "Bare rock or paved (E)",
-      "pixels": 346,
-      "area_km2": 3.1331443323264994,
-      "pct": 0.7476877863255251,
+      "pixels": 334,
+      "area_km2": 3.024480367043499,
+      "pct": 0.735002860789578,
       "rank": 9,
       "group": "Land cover"
     },
     {
       "lcz": 16,
       "name": "Bare soil or sand (F)",
-      "pixels": 939,
-      "area_km2": 8.502955283394748,
-      "pct": 2.029129570403665,
+      "pixels": 925,
+      "area_km2": 8.376180657231249,
+      "pct": 2.035561815060957,
       "rank": 7,
       "group": "Land cover"
     },
     {
       "lcz": 17,
       "name": "Water (G)",
-      "pixels": 2596,
-      "area_km2": 23.507637822888995,
-      "pct": 5.609819344800761,
+      "pixels": 2584,
+      "area_km2": 23.398973857605995,
+      "pct": 5.686369437964879,
       "rank": 5,
       "group": "Land cover"
     }
   ],
   "code_stats_incl0": {
-    "n": 83050,
+    "n": 80969,
     "min": 0.0,
     "max": 17.0,
-    "mean": 5.544852498494882,
+    "mean": 5.553940396942039,
     "median": 6.0,
     "mode": 0.0,
     "q1": 0.0,
-    "q3": 13.0,
-    "sd_pop": 5.933144916700249,
-    "sd_sample": 5.933180637341415,
-    "cv_pct": 107.00275468663531
+    "q3": 12.0,
+    "sd_pop": 5.916632621816902,
+    "sd_sample": 5.916669158561996,
+    "cv_pct": 106.53035860943987
   },
   "code_stats_excl0": {
-    "n": 46276,
+    "n": 45442,
     "min": 2.0,
     "max": 17.0,
-    "mean": 9.951162589679315,
+    "mean": 9.896065314026671,
     "median": 9.0,
     "mode": 14.0,
     "q1": 6.0,
     "q3": 14.0,
-    "sd_pop": 4.396399241563926,
-    "sd_sample": 4.396446744270467,
-    "cv_pct": 44.17975489741851
+    "sd_pop": 4.405115929838092,
+    "sd_sample": 4.405164400290929,
+    "cv_pct": 44.51381220770932
   },
   "class_area_stats_km2": {
     "n": 13,
-    "mean": 32.23419011176991,
-    "median": 8.502955283394748,
-    "sd_pop": 48.90879844223909,
-    "sd_sample": 50.90589139597564,
-    "cv_pct": 151.72957121817262,
+    "mean": 31.65325583583388,
+    "median": 8.376180657231249,
+    "sd_pop": 47.83002600346149,
+    "sd_sample": 49.783069442493385,
+    "cv_pct": 151.10618083500367,
     "min": 0.23543859144649995,
-    "max": 152.11144073531946,
-    "q1": 1.7114574532072495,
-    "q3": 33.504722628924995,
-    "skewness": 1.701597059002928,
-    "total": 419.0444714530089
+    "max": 146.55146784500596,
+    "q1": 1.6571254705657497,
+    "q3": 32.680687558862246,
+    "skewness": 1.684928554069381,
+    "total": 411.4923258658404
   },
   "class_area_stats_pct": {
     "n": 13,
-    "mean": 7.6923076923076925,
-    "median": 2.029129570403665,
-    "sd_pop": 11.671505478320968,
-    "sd_sample": 12.148088058401731,
-    "cv_pct": 151.7295712181726,
-    "min": 0.0561846313423805,
-    "max": 36.299593741896444,
-    "q1": 0.40841905091191977,
-    "q3": 7.9955052294926094,
-    "skewness": 1.7015970590029281,
-    "total": 100.0
+    "mean": 7.692307692307693,
+    "median": 2.035561815060957,
+    "sd_pop": 11.62355237192336,
+    "sd_sample": 12.09817688282339,
+    "cv_pct": 151.10618083500364,
+    "min": 0.05721579155847014,
+    "max": 35.61462963778003,
+    "q1": 0.40271114827692445,
+    "q3": 7.941991989789182,
+    "skewness": 1.6849285540693801,
+    "total": 100.00000000000001
   },
   "composition": {
-    "shannon_H": 1.6669010242726086,
+    "shannon_H": 1.6694838901763611,
     "H_max_observed": 2.5649493574615367,
     "H_max_17": 2.833213344056216,
-    "pielou_J_observed": 0.6498767780437961,
-    "pielou_J_17": 0.58834292439346,
-    "gini_simpson": 0.7459856709073038,
-    "inverse_simpson": 3.936785785163619,
-    "hill_N1": 5.295730999890228,
-    "berger_parker": 0.36299593741896446,
-    "gini_area": 0.6875336609107895,
+    "pielou_J_observed": 0.6508837631900092,
+    "pielou_J_17": 0.589254562731311,
+    "gini_simpson": 0.7474378624112243,
+    "inverse_simpson": 3.9594216676618834,
+    "hill_N1": 5.309426842573865,
+    "berger_parker": 0.35614629637780026,
+    "gini_area": 0.6862611003713949,
     "classes_to_80pct": 4,
-    "top2_share_pct": 68.25352234419569,
-    "shannon_built": 1.1192292409078748,
-    "shannon_landcover": 0.8113563234317512
+    "top2_share_pct": 68.05378284406495,
+    "shannon_built": 1.1169410921918703,
+    "shannon_landcover": 0.817529008816044
   },
   "groups": {
-    "built_km2": 224.53597359643896,
-    "landcover_km2": 194.50849785656996,
-    "built_pct": 53.58285072175642,
-    "landcover_pct": 46.417149278243585,
-    "built_to_landcover_ratio": 1.1543761638733707,
+    "built_km2": 223.21389535216247,
+    "landcover_km2": 188.27843051367796,
+    "built_pct": 54.24497161216496,
+    "landcover_pct": 45.75502838783504,
+    "built_to_landcover_ratio": 1.1855521354367065,
     "compact_km2": 37.51623401395574,
-    "open_km2": 134.308661089788,
-    "other_built_km2": 52.711078492695236,
-    "vegetation_km2": 159.3647604179597,
-    "bare_km2": 11.636099615721246,
-    "water_km2": 23.507637822888995,
-    "open_to_compact_ratio": 3.5800144822592332
+    "open_km2": 133.89211588953648,
+    "other_built_km2": 51.805545448670244,
+    "vegetation_km2": 153.4787956317972,
+    "bare_km2": 11.400661024274747,
+    "water_km2": 23.398973857605995,
+    "open_to_compact_ratio": 3.5689114168476954
   },
   "cumulative_share_by_rank": [
     {
       "lcz": 14,
-      "cum_pct": 36.299593741896444
+      "cum_pct": 35.61462963778003
     },
     {
       "lcz": 6,
-      "cum_pct": 68.25352234419569
+      "cum_pct": 68.05378284406495
     },
     {
       "lcz": 3,
-      "cum_pct": 77.1501426225257
+      "cum_pct": 77.11368337661195
     },
     {
       "lcz": 9,
-      "cum_pct": 85.14564785201831
+      "cum_pct": 85.05567536640113
     },
     {
       "lcz": 17,
-      "cum_pct": 90.75546719681907
+      "cum_pct": 90.742044804366
     },
     {
       "lcz": 8,
-      "cum_pct": 95.33883654594173
+      "cum_pct": 95.38972756480788
     },
     {
       "lcz": 16,
-      "cum_pct": 97.3679661163454
+      "cum_pct": 97.42528937986886
     },
     {
       "lcz": 11,
-      "cum_pct": 98.297173480854
+      "cum_pct": 98.33854143743675
     },
     {
       "lcz": 15,
-      "cum_pct": 99.04486126717951
+      "cum_pct": 99.07354429822632
     },
     {
       "lcz": 12,
-      "cum_pct": 99.45328031809144
+      "cum_pct": 99.47625544650325
     },
     {
       "lcz": 13,
-      "cum_pct": 99.8465727374881
+      "cum_pct": 99.84375687689804
     },
     {
       "lcz": 5,
-      "cum_pct": 99.94381536865761
+      "cum_pct": 99.94278420844155
     },
     {
       "lcz": 2,
-      "cum_pct": 99.99999999999999
+      "cum_pct": 100.00000000000003
     }
   ],
   "checks": {
     "area_column_matches_pixel_count": true,
     "total_pixels_matches_width_x_height": true,
-    "qgis_mean_reproduced": true,
-    "qgis_sd_reproduced": true
+    "qgis_mean_sd_reproduced": false
   }
 }

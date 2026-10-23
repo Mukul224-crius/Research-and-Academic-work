@@ -97,52 +97,52 @@
       "group": "Built",
       "lcz_classes": "LCZ 1\u201310",
       "lulc_classes": "Built area (7)",
-      "lcz_km2": 224.53597359643896,
+      "lcz_km2": 223.21389535216247,
       "lulc_km2": 171.5671,
-      "lcz_pct": 53.58285072175642,
+      "lcz_pct": 54.24497161216496,
       "lulc_pct": 41.707450242902546,
-      "diff_pp": 11.875400478853877,
-      "ratio": 1.3087356118768632
+      "diff_pp": 12.537521369262414,
+      "ratio": 1.3010297157914452
     },
     {
       "group": "Vegetated",
       "lcz_classes": "LCZ 11\u201314",
       "lulc_classes": "Trees, Flooded veg., Crops, Rangeland (2, 4, 5, 11)",
-      "lcz_km2": 159.3647604179597,
+      "lcz_km2": 153.4787956317972,
       "lulc_km2": 211.1788,
-      "lcz_pct": 38.030512576713626,
+      "lcz_pct": 37.29809427401962,
       "lulc_pct": 51.33693635525615,
-      "diff_pp": -13.306423778542523,
-      "ratio": 0.7546437446275843
+      "diff_pp": -14.038842081236531,
+      "ratio": 0.7267717954254745
     },
     {
       "group": "Bare",
       "lcz_classes": "LCZ 15\u201316",
       "lulc_classes": "Bare ground (8)",
-      "lcz_km2": 11.636099615721246,
+      "lcz_km2": 11.400661024274747,
       "lulc_km2": 0.2141,
-      "lcz_pct": 2.7768173567291896,
+      "lcz_pct": 2.7705646758505345,
       "lulc_pct": 0.05204707136161557,
-      "diff_pp": 2.724770285367574,
-      "ratio": 54.34890058720806
+      "diff_pp": 2.7185176044889188,
+      "ratio": 53.24923411618284
     },
     {
       "group": "Water",
       "lcz_classes": "LCZ 17",
       "lulc_classes": "Water (1)",
-      "lcz_km2": 23.507637822888995,
+      "lcz_km2": 23.398973857605995,
       "lulc_km2": 28.3984,
-      "lcz_pct": 5.609819344800761,
+      "lcz_pct": 5.686369437964879,
       "lulc_pct": 6.903566330479699,
-      "diff_pp": -1.293746985678938,
-      "ratio": 0.8277803616713968
+      "diff_pp": -1.2171968925148207,
+      "ratio": 0.8239539501382471
     }
   ],
   "agreement": {
-    "proportional_overlap": 0.8539982923577855,
-    "dissimilarity_index": 0.14600170764221454,
-    "jensen_shannon_bits": 0.025279851098396536
+    "proportional_overlap": 0.8474396102624866,
+    "dissimilarity_index": 0.1525603897375134,
+    "jensen_shannon_bits": 0.026646286005295658
   },
-  "extent_difference_km2": 7.686071453008935,
-  "extent_difference_pct": 1.8684610434620847
+  "extent_difference_km2": 0.1339258658404674,
+  "extent_difference_pct": 0.032556978498668655
 }

@@ -1,35 +1,35 @@
 BHOPAL LCZ STATISTICS - derived only from data/lcz_unique_values_report.csv
-Pixel 95.1595 m -> 9055.33 m2/pixel; extent 83050 px = 752.045 km2
-Value 0 (excluded): 36774 px = 333.001 km2 (44.28% of extent)
-Valid LCZ: 46276 px = 419.044 km2, 13 classes; absent: [1, 4, 7, 10]
+Pixel 95.1595 m -> 9055.33 m2/pixel; extent 80969 px = 733.201 km2
+Value 0 (excluded): 35527 px = 321.709 km2 (43.88% of extent)
+Valid LCZ: 45442 px = 411.492 km2, 13 classes; absent: [1, 4, 7, 10]
 
 LCZ  name                       pixels   km2      %      rank
   2  Compact mid-rise               26    0.235   0.06  13
-  3  Compact low-rise             4117   37.281   8.90  3
+  3  Compact low-rise             4117   37.281   9.06  3
   5  Open mid-rise                  45    0.407   0.10  12
-  6  Open low-rise               14787  133.901  31.95  2
-  8  Large low-rise               2121   19.206   4.58  6
-  9  Sparsely built               3700   33.505   8.00  4
- 11  Dense trees (A)               430    3.894   0.93  8
- 12  Scattered trees (B)           189    1.711   0.41  10
- 13  Bush, scrub (C)               182    1.648   0.39  11
- 14  Low plants (D)              16798  152.111  36.30  1
- 15  Bare rock or paved (E)        346    3.133   0.75  9
- 16  Bare soil or sand (F)         939    8.503   2.03  7
- 17  Water (G)                    2596   23.508   5.61  5
+  6  Open low-rise               14741  133.485  32.44  2
+  8  Large low-rise               2112   19.125   4.65  6
+  9  Sparsely built               3609   32.681   7.94  4
+ 11  Dense trees (A)               415    3.758   0.91  8
+ 12  Scattered trees (B)           183    1.657   0.40  10
+ 13  Bush, scrub (C)               167    1.512   0.37  11
+ 14  Low plants (D)              16184  146.551  35.61  1
+ 15  Bare rock or paved (E)        334    3.024   0.74  9
+ 16  Bare soil or sand (F)         925    8.376   2.04  7
+ 17  Water (G)                    2584   23.399   5.69  5
 
-Raster codes INCL. 0: n=83050 min=0 max=17 mean=5.5449 median=6.0 mode=0 Q1=0 Q3=13 SDpop=5.9331 SDsample=5.9332 CV=107.00%
-Raster codes EXCL. 0: n=46276 min=2 max=17 mean=9.9512 median=9.0 mode=14 Q1=6 Q3=14 SDpop=4.3964 SDsample=4.3964 CV=44.18%
-  -> QGIS-reported mean 5.54485 / SD 5.9331 reproduced (incl. 0): PASS
+Raster codes INCL. 0: n=80969 min=0 max=17 mean=5.5539 median=6.0 mode=0 Q1=0 Q3=12 SDpop=5.9166 SDsample=5.9167 CV=106.53%
+Raster codes EXCL. 0: n=45442 min=2 max=17 mean=9.8961 median=9.0 mode=14 Q1=6 Q3=14 SDpop=4.4051 SDsample=4.4052 CV=44.51%
+  -> QGIS-reported mean/SD reproduced: not checked (no QGIS values supplied)
 
-Class area (km2): n=13 mean=32.234 median=8.503 SDpop=48.909 SDsample=50.906 CV=151.7% min=0.235 max=152.111 Q1=1.711 Q3=33.505 skew=1.702
-Class area (%): n=13 mean=7.692 median=2.029 SDpop=11.672 SDsample=12.148 CV=151.7% min=0.056 max=36.300 Q1=0.408 Q3=7.996 skew=1.702
+Class area (km2): n=13 mean=31.653 median=8.376 SDpop=47.830 SDsample=49.783 CV=151.1% min=0.235 max=146.551 Q1=1.657 Q3=32.681 skew=1.685
+Class area (%): n=13 mean=7.692 median=2.036 SDpop=11.624 SDsample=12.098 CV=151.1% min=0.057 max=35.615 Q1=0.403 Q3=7.942 skew=1.685
 
-Shannon H=1.6669 nats; Hmax(13)=2.5649; Hmax(17)=2.8332
-Pielou J (13)=0.6499; J (17)=0.5883
-Gini-Simpson=0.7460; inverse Simpson=3.937; Hill N1=5.296
-Berger-Parker=0.3630; Gini(area)=0.6875; classes to 80%=4; top-2 share=68.25%
-Shannon built-only=1.1192; land-cover-only=0.8114
-Built 224.536 km2 (53.58%), land cover 194.508 km2 (46.42%), ratio 1.154
-Compact(1-3) 37.516; Open(4-6) 134.309; Other built(7-10) 52.711; open:compact 3.580
-Vegetation(11-14) 159.365; Bare(15-16) 11.636; Water(17) 23.508
+Shannon H=1.6695 nats; Hmax(13)=2.5649; Hmax(17)=2.8332
+Pielou J (13)=0.6509; J (17)=0.5893
+Gini-Simpson=0.7474; inverse Simpson=3.959; Hill N1=5.309
+Berger-Parker=0.3561; Gini(area)=0.6863; classes to 80%=4; top-2 share=68.05%
+Shannon built-only=1.1169; land-cover-only=0.8175
+Built 223.214 km2 (54.24%), land cover 188.278 km2 (45.76%), ratio 1.186
+Compact(1-3) 37.516; Open(4-6) 133.892; Other built(7-10) 51.806; open:compact 3.569
+Vegetation(11-14) 153.479; Bare(15-16) 11.401; Water(17) 23.399

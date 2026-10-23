@@ -148,7 +148,7 @@ for ti, (tname, segs) in enumerate(tiers):
             axd.text(left + w / 2, yy, f"{lab}\n{v:.1f} km² · {w:.1f}%", ha="center", va="center",
                      fontsize=6.6, color=INK)
         elif w > 6:
-            axd.text(left + w / 2, yy, f"{lab.split()[0]}\n{lab.split()[1]}\n{w:.1f}%", ha="center", va="center", fontsize=6.0, color=INK)
+            axd.text(left + w / 2, yy, "\n".join(lab.rsplit(" ", 1)) + f"\n{w:.1f}%", ha="center", va="center", fontsize=6.0, color=INK)
         else:
             small_i += 1
             axd.annotate(f"{lab}: {v:.1f} km² · {w:.1f}%", xy=(left + w / 2, yy - 0.28),
@@ -194,13 +194,14 @@ panel_title(axa, "(a) Frequency distribution of raster values")
 
 # (b) Mean ± SD and median, incl. vs excl. value 0
 axb = fig.add_subplot(gs[1, 0])
-for i, (s, col, lab) in enumerate(((inc, CAT[0], "Incl. 0\n(n = 83,050)"), (exc, CAT[1], "Excl. 0\n(n = 46,276)"))):
+LABS = (f"Incl. 0\n(n = {inc['n']:,})", f"Excl. 0\n(n = {exc['n']:,})")
+for i, (s, col, lab) in enumerate(((inc, CAT[0], LABS[0]), (exc, CAT[1], LABS[1]))):
     axb.add_patch(Rectangle((i - 0.18, s["q1"]), 0.36, s["q3"] - s["q1"], fc=col, alpha=0.18, ec=col, lw=1))
     axb.errorbar(i, s["mean"], yerr=s["sd_pop"], fmt="o", color=col, capsize=5, lw=1.6, ms=6)
     axb.plot([i - 0.18, i + 0.18], [s["median"]] * 2, color=INK, lw=2)
     axb.text(i + 0.24, s["mean"], f"x̄ = {s['mean']:.2f}\nSD = {s['sd_pop']:.2f}\nMd = {s['median']:.0f}",
              va="center", fontsize=7)
-axb.set_xticks([0, 1]); axb.set_xticklabels([kpi for kpi in ("Incl. 0\n(n = 83,050)", "Excl. 0\n(n = 46,276)")], fontsize=7.5)
+axb.set_xticks([0, 1]); axb.set_xticklabels(LABS, fontsize=7.5)
 axb.set_xlim(-0.5, 1.9); axb.set_ylim(-2, 18); axb.set_ylabel("Raster code value")
 axb.grid(axis="x", visible=False)
 axb.text(-0.45, 17, "dot ± bar = mean ± SD; black bar = median;\nshaded box = Q1–Q3", fontsize=6.4, color=INK2, va="top")

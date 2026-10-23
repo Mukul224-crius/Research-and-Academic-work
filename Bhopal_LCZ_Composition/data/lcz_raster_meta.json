@@ -1,0 +1,15 @@
+{
+  "file": "D:/papers/LCZ/DLR/LCZ_Clipped.tif",
+  "band": 1,
+  "crs": "EPSG:32643 - WGS 84 / UTM zone 43N",
+  "pixel_size_m": 95.1595,
+  "width": 301,
+  "height": 269,
+  "xmin": 731110.5236863441532478,
+  "ymin": 2557602.1795025025494397,
+  "xmax": 759753.5365237239748240,
+  "ymax": 2583200.0879850778728724,
+  "qgis_mean": null,
+  "qgis_sd": null,
+  "note": "Replaces CLIP_LCZ.tif (302 x 275 px) on 23 Oct 2026 at the author's request. QGIS layer mean/SD not supplied for this file; set qgis_mean/qgis_sd here if obtained."
+}

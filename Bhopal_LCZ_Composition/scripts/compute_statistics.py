@@ -18,8 +18,9 @@ import os
 import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PIXEL = 95.1595  # m, from the QGIS report ("units per pixel 95.1595")
-QGIS_MEAN, QGIS_SD = 5.54485, 5.9331  # values reported in QGIS layer metadata
+META = json.load(open(os.path.join(ROOT, "data", "lcz_raster_meta.json")))
+PIXEL = META["pixel_size_m"]  # m, from the QGIS report ("units per pixel")
+QGIS_MEAN, QGIS_SD = META["qgis_mean"], META["qgis_sd"]  # optional: values reported in QGIS layer metadata
 
 NAMES = {
     1: "Compact high-rise", 2: "Compact mid-rise", 3: "Compact low-rise",
@@ -41,7 +42,8 @@ for v, n, a in rows:
     assert abs(n * pix_area - a) / a < 1e-6, (v, n, a)
 
 total_pixels = sum(n for _, n, _ in rows)
-assert total_pixels == 302 * 275 == 83050  # width x height from the report
+assert total_pixels == META["width"] * META["height"]  # width x height from the report
+ZERO = next(n for v, n, _ in rows if v == 0)
 
 valid = [(v, n) for v, n, _ in rows if v != 0]
 n_valid = sum(n for _, n in valid)
@@ -82,9 +84,11 @@ all_cnts = [n for _, n, _ in rows]
 code_incl0 = weighted_stats(all_vals, all_cnts)
 code_excl0 = weighted_stats(values, counts)
 
-# Integrity check 2: reproduce QGIS-reported mean/SD (incl. 0) to its printed precision
-assert abs(code_incl0["mean"] - QGIS_MEAN) < 5e-5, code_incl0["mean"]
-assert abs(code_incl0["sd_pop"] - QGIS_SD) < 5e-4, code_incl0["sd_pop"]
+# Integrity check 2 (only when QGIS layer statistics were supplied): reproduce them
+qgis_checked = QGIS_MEAN is not None and QGIS_SD is not None
+if qgis_checked:
+    assert abs(code_incl0["mean"] - QGIS_MEAN) < 5e-5, code_incl0["mean"]
+    assert abs(code_incl0["sd_pop"] - QGIS_SD) < 5e-4, code_incl0["sd_pop"]
 
 
 def plain_stats(x):
@@ -136,7 +140,7 @@ H_built = float(-(pb * np.log(pb)).sum())
 pn = counts[~built_mask] / counts[~built_mask].sum()
 H_nat = float(-(pn * np.log(pn)).sum())
 
-zero_km2 = 36774 * pix_area / 1e6
+zero_km2 = ZERO * pix_area / 1e6
 extent_km2 = total_pixels * pix_area / 1e6
 
 classes = []
@@ -148,8 +152,8 @@ for v, n, a, pp in zip(values, counts, area_km2, p):
 
 out = dict(
     pixel_size_m=PIXEL, pixel_area_m2=pix_area, total_pixels=total_pixels,
-    extent_km2=extent_km2, zero_pixels=36774, zero_km2=zero_km2,
-    zero_pct_of_extent=36774 / total_pixels * 100,
+    extent_km2=extent_km2, zero_pixels=ZERO, zero_km2=zero_km2,
+    zero_pct_of_extent=ZERO / total_pixels * 100, raster=META,
     valid_pixels=n_valid, valid_km2=float(area_km2.sum()), n_classes=int(len(values)),
     absent_classes=[c for c in range(1, 18) if c not in values],
     classes=classes,
@@ -169,7 +173,7 @@ out = dict(
                 open_to_compact_ratio=open_km2 / compact_km2),
     cumulative_share_by_rank=[dict(lcz=int(values[i]), cum_pct=float(c)) for i, c in zip(order, cum_share)],
     checks=dict(area_column_matches_pixel_count=True, total_pixels_matches_width_x_height=True,
-                qgis_mean_reproduced=True, qgis_sd_reproduced=True),
+                qgis_mean_sd_reproduced=qgis_checked),
 )
 
 with open(os.path.join(ROOT, "validation", "lcz_statistics.json"), "w") as f:
@@ -178,7 +182,7 @@ with open(os.path.join(ROOT, "validation", "lcz_statistics.json"), "w") as f:
 lines = []
 lines.append("BHOPAL LCZ STATISTICS - derived only from data/lcz_unique_values_report.csv")
 lines.append(f"Pixel {PIXEL} m -> {pix_area:.2f} m2/pixel; extent {total_pixels} px = {extent_km2:.3f} km2")
-lines.append(f"Value 0 (excluded): {36774} px = {zero_km2:.3f} km2 ({out['zero_pct_of_extent']:.2f}% of extent)")
+lines.append(f"Value 0 (excluded): {ZERO} px = {zero_km2:.3f} km2 ({out['zero_pct_of_extent']:.2f}% of extent)")
 lines.append(f"Valid LCZ: {n_valid} px = {area_km2.sum():.3f} km2, {len(values)} classes; absent: {out['absent_classes']}")
 lines.append("")
 lines.append("LCZ  name                       pixels   km2      %      rank")
@@ -189,7 +193,7 @@ for lab, s in (("Raster codes INCL. 0", code_incl0), ("Raster codes EXCL. 0", co
     lines.append(f"{lab}: n={s['n']} min={s['min']:.0f} max={s['max']:.0f} mean={s['mean']:.4f} "
                  f"median={s['median']:.1f} mode={s['mode']:.0f} Q1={s['q1']:.0f} Q3={s['q3']:.0f} "
                  f"SDpop={s['sd_pop']:.4f} SDsample={s['sd_sample']:.4f} CV={s['cv_pct']:.2f}%")
-lines.append(f"  -> QGIS-reported mean {QGIS_MEAN} / SD {QGIS_SD} reproduced (incl. 0): PASS")
+lines.append(f"  -> QGIS-reported mean/SD reproduced: {'PASS' if qgis_checked else 'not checked (no QGIS values supplied)'}")
 lines.append("")
 for lab, s in (("Class area (km2)", area_stats), ("Class area (%)", pct_stats)):
     lines.append(f"{lab}: n={s['n']} mean={s['mean']:.3f} median={s['median']:.3f} SDpop={s['sd_pop']:.3f} "
