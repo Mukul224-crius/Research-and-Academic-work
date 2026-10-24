@@ -103,3 +103,62 @@ Rejected candidates had a DOI that could not be confirmed:
 3. Confirm nearest-neighbour resampling during reprojection.
 4. Section 4.1: describe the spatial pattern from the final map, and paste the map into the reserved Fig. 1 box.
 5. Kotharkar, Bagade & Ramesh (2019): volume and article number.
+
+## Response to the ChatGPT technical review (24 Oct 2026)
+
+Build all three files with `for m in draft anon titlepage; do MODE=$m NODE_PATH=$(npm root -g) node scripts/build_paper.js; done`.
+
+**Submission set** (`submission/`). GIS Odyssey uses double-anonymous review, as confirmed on its Review Process page.
+- `Manuscript_anonymised.docx`: no names, affiliations, ORCIDs, acknowledgments or reminder notes, and blank file properties. About 37,300 characters. Checked by `validate_manuscript.py submission/Manuscript_anonymised.docx`.
+- `Title_page.docx`: authors, ORCIDs, acknowledgments and conflict of interest. Author contributions and funding are left for the author to fill in.
+- `Supplementary_Material_S1.zip`: frequency tables, scripts and output statistics, with local paths removed.
+
+**What was accepted and fixed**
+- Equations:
+  - The "blank equations" were a renderer artefact: the review's tool, like this sandbox, lacked LibreOffice's equation module.
+  - Once `libreoffice-math` was installed, all 11 render.
+  - A real defect was also found and fixed: sums without an upper limit lacked a required element. Every sum now has explicit limits.
+  - Every equation is cited in the text.
+- Conventions now stated:
+  - Population SD (sample SD also listed) and nearest-rank quartiles for codes.
+  - Interpolated quartiles and population-moment skewness for class areas.
+  - Natural logarithms for H, J and N1; base 2 (bits) for JSD.
+  - The sorted-rank Gini convention, whose maximum is (S − 1)/S.
+- Terminology:
+  - "Validation" or "cross-check" became "cross-dataset compositional comparison" or "consistency check" in Fig. 2, Section 3.7, Section 4.7, the Fig. 5 caption, the abstract and the conclusions.
+  - The overlap is explicitly "not classification accuracy".
+  - The phrase "credible picture" was removed.
+- Data provenance:
+  - Zenodo DOI 10.5281/zenodo.6364594 and nominal year 2018 (both verified).
+  - LCZ_Filter is the recommended, morphologically filtered band (verified).
+  - 95.1595 m is stated as a result of reprojection, not the native resolution.
+  - Esri product name and Living Atlas link added.
+- Background mask: the wording now states exactly what was checked. A zonal-histogram check is requested in the draft.
+- Non-detected LCZ 1, 4, 7 and 10: the wording now says that not detecting them does not prove they are absent.
+- Literature:
+  - Temperature claims are now tied to season, method and value (daytime Landsat LST, pre-monsoon, 1.76 °C over 2.64 km).
+  - The Nagpur dominance claim is now cited to Kotharkar, Bagade & Agrawal (2019), its actual source.
+  - The introduction's "gap" claim is narrowed.
+- Section 4.1 now has a spatial description written from the author's map (Fig. 1). The author should check place names.
+- Fig. 1 is now the author's two-panel map, with a caption describing both panels.
+- Figs. 2–5: text enlarged by about 20% and layouts re-checked.
+- Kotharkar, Bagade & Ramesh (2019), vol. 190, art. 103586, is now confirmed, and the red note is removed.
+
+**What was rejected**
+- The review says Mistry & Mehrotra (2025a) report "OA 88.63% / Kappa 0.86". No source for this could be found, so it is not used.
+
+**Still open (author)**
+1. Boundary layer: its official name, provider and date.
+2. The GEE 'latest' version on the export date (it may be newer than v1), and the export date.
+3. The LULC 2017 version and download date.
+4. A zonal histogram of value 0 inside the boundary.
+5. Confirm nearest-neighbour resampling.
+6. Check the Section 4.1 place names.
+7. Author contributions and funding on the title page.
+8. Map fixes:
+   - Re-export at 300 dpi or more (currently 1385 × 980 px at 220 dpi).
+   - Remove the metadata paragraph from the layout.
+   - Rename the LULC legend entries to the product class names (Water, Trees, Flooded vegetation, Crops, Built area, Bare ground, Rangeland).
+   - Put swatches before labels.
+   - Add a coordinate grid and a locator inset.
+9. In Word, turn on File → Options → Advanced → "Do not compress images in file". Word saved two figures at 220 ppi.

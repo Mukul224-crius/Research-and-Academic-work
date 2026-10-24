@@ -11,7 +11,8 @@ import json, os, re, sys
 import docx
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-P = os.path.join(ROOT, "Bhopal_LCZ_Composition_Paper_DRAFT.docx")
+P = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "Bhopal_LCZ_Composition_Paper_DRAFT.docx")
+ANON = "anonymised" in P
 d = docx.Document(P)
 paras = [p.text for p in d.paragraphs]
 tables_txt = [c.text for t in d.tables for r in t.rows for c in r.cells]
@@ -64,6 +65,13 @@ uc = U["code_stats"]
 check(round(uc["mean"], 4) == 6.0001 and uc["median"] == 7 and round(uc["sd_pop"], 4) == 2.2466,
       "LULC mean/median/SD reproduce the independently reported 6.0001 / 7 / 2.2466")
 check(abs(U["valid_km2"] - 411.3584) < 1e-9, "LULC valid area = 411.3584 km2")
+if ANON:
+    low = full.lower()
+    for k in ["maravi", "janki", "bikash", "indira gandhi", "igntu", "orcid", "amarkantak", "author to confirm"]:
+        check(k not in low, f"anonymised file contains no '{k}'")
+    import zipfile
+    core = zipfile.ZipFile(P).read("docProps/core.xml").decode()
+    check(not re.search(r"<dc:creator>\S", core) and not re.search(r"<cp:lastModifiedBy>\S", core), "file properties carry no author name")
 flags = [p for p in paras if p.startswith("[AUTHOR TO CONFIRM")]
 print(f"INFO {len(flags)} author-to-confirm flags remain in the text")
 print(f"INFO {len(d.tables)} tables, {len(d.inline_shapes)} images")
