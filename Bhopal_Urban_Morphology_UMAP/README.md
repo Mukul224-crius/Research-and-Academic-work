@@ -291,3 +291,72 @@ content — only its structural conventions. Two changes made:
    interspersed after each section — matching the reference paper's page-5 figure
    block convention. Body text (Intro through Acknowledgment) now runs continuously
    in two columns with no more per-section one-column breaks for individual figures.
+
+## 12. AGERS 2026 review response — camera-ready revision (11 Nov 2026)
+
+Paper **accepted** (weak accept / accept-with-revisions across 3 reviewers). Full
+reviews logged in the chat record. This pass fixes reviewer point 6 (broken
+cross-references) and reviewer points 3 and 7 (overclaiming / transferability
+language) from the review-response priority list; points 1 (cluster-stability
+analysis) and 4 (finer grid scale) are **not yet done** — they need new
+computation (re-running clustering/UMAP), not just text edits, and are tracked as
+open items below.
+
+**Root cause of the reviewer-3 broken-reference finding**: the actual IEEE-submitted
+PDF has a different section structure than this script's prior version — at some
+point between generation and submission, "II. Study Area" was manually merged into
+Materials and Methods as subsection A (shifting Methods from III to II, Results from
+IV to III, Conclusion from V to IV), but the in-text cross-references were hardcoded
+plain-text strings (e.g. "Section IV-B") that were never updated to match. `scripts/
+build_paper.js` itself was still generating the *old*, pre-merge structure. Fixed by:
+
+1. Restructuring the script to match the submitted/reviewed numbering exactly:
+   `II. Materials and Methods` (A. Study Area, B. Data Sources, C. Field-Level
+   Definitions, D. Standardization, E. K-Means Clustering, F. Cluster Validity
+   Assessment, G. Spatial Autocorrelation Validation), `III. Results and Discussion`
+   (A-D unchanged), `IV. Conclusion`.
+2. Fixing every cross-reference to the corrected section under that numbering:
+   "Section IV-B" -> "Section III-B" (k=6 justification, Limitations); "Section
+   III-A" -> "Section II-B" (OBF provenance, Limitations); "Section III-F" (did not
+   exist) -> "Section II-G" (Fig. 3 caption, spatial-weights definition — also
+   dropped the leftover "(to be confirmed)" placeholder wording); "Section IV-D"
+   (does not exist, IV has no subsections) -> "Section III-D" (Conclusion).
+
+**Reviewer point 3 (don't overstate what the spatial-autocorrelation checks prove)**:
+reworded three places that implied the Local Moran's I / global Moran's I checks
+validate the *entire six-cluster classification*, when they actually only (a) show
+the UMI composite surface itself is non-randomly distributed (expected, since UMI is
+built from the same variables as the clustering inputs — not independent of it), and
+(b) corroborate the Urban Core cluster specifically via its 62.5% overlap with the
+LISA High-High hotspot. Edited: Abstract closing sentence, Results III-C (both the
+global-Moran's-I paragraph and the 62.5%-overlap paragraph), Limitations, and
+Conclusion — each now states explicitly that this is not an independent accuracy
+assessment of the full classification.
+
+**Reviewer point 7 (scope transferability claims to the evidence)**: softened
+"applicable to other data-scarce Indian cities" (stated as fact) to "designed for
+extension to other data-scarce Indian cities, pending independent testing in those
+settings" in the Abstract and Conclusion — the study only analyzed Bhopal, so
+transferability is a design goal, not a demonstrated result.
+
+Rebuilt via `node scripts/build_paper.js`; verified via python-docx read-back
+(107 paragraphs, 18 `<m:oMath>` equations, 5 images, section headings confirmed
+in order I-IV with correct A-G/A-D lettering, all three `[AUTHOR TO CONFIRM]`
+flags still present and unchanged).
+
+**Still open (reviewer points 1 and 4, not started — need new analysis, not text
+edits)**:
+1. **Cluster-stability analysis**: re-run K-Means/UMAP across multiple random
+   seeds and UMAP hyperparameter settings, plus at least one alternative grid
+   size, and compare against plain K-Means on the standardized indicators
+   (no UMAP step) as a baseline — needed to strengthen the k=6 justification
+   beyond "interpretability." Requires the original per-cell indicator data
+   (`data/bhopal_umap_clusters.csv`) and a Python environment with
+   `scikit-learn`/`umap-learn`; not yet run.
+2. **Finer grid scale (reviewer 3's "fatal flaw" point)**: re-run the full
+   pipeline at a finer grid (reviewer suggests 250 m x 250 m) to test whether
+   the 1 km grid is averaging away real neighborhood-level heterogeneity
+   (ecological fallacy risk). This needs the raw building-footprint geometries
+   re-aggregated to a new grid, not just the pre-aggregated per-cell CSV used
+   so far — the raw OBF polygon layer is not currently in this package's
+   `data/` folder. Not started.
