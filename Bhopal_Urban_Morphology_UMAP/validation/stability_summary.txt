@@ -1,0 +1,26 @@
+Clustering stability analysis -- AGERS 2026 revision (reviewer 1 & 2 request)
+================================================================================
+
+1. Seed stability (10 seeds, fixed UMAP hyperparameters n_neighbors=15, min_dist=0.10):
+   mean ARI vs original labels = 0.791
+   min ARI = 0.691, max ARI = 0.928
+   mean silhouette (UMAP space) = 0.577
+
+2. UMAP hyperparameter sensitivity (9 combinations of n_neighbors x min_dist):
+   mean ARI vs original labels = 0.781
+   min ARI = 0.676, max ARI = 0.936
+
+3. Plain K-Means (no UMAP), k=6, on standardized raw 5-indicator space:
+   silhouette = 0.406, Davies-Bouldin = 0.963
+   ARI vs UMAP-based original clustering = 0.294
+
+4. k-scan for plain K-Means on raw indicator space (k=2..10):
+   k=2: silhouette=0.486
+   k=3: silhouette=0.487
+   k=4: silhouette=0.435
+   k=5: silhouette=0.426
+   k=6: silhouette=0.406
+   k=7: silhouette=0.411
+   k=8: silhouette=0.380
+   k=9: silhouette=0.388
+   k=10: silhouette=0.405
