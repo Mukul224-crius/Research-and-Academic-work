@@ -284,7 +284,9 @@ const methodsChildren = [
   mathEq([SUB("UMI", "i"), T(" = "), FRAC([SUBc([T("OBF")], "n,i"), T(" + "), SUBc([T("bld")], "n,i"), T(" + "), SUBc([T("WSF")], "n,i")], [T("3")])], "12"),
   p("11) Weighted UMI (UMI_w): unlike UMI, this field is not a simple mean. We recovered its weighting by ordinary least-squares regression of UMI_w on (OBF_n, bld_n, WSF_n) with no intercept across all 423 valid cells, obtaining weights of 0.400, 0.400, and 0.200 respectively, with a maximum absolute residual of 0.00046 across every cell (consistent with field rounding rather than model error):"),
   mathEq([SUBc([T("UMI")], "w,i"), T(" = 0.4·"), SUBc([T("OBF")], "n,i"), T(" + 0.4·"), SUBc([T("bld")], "n,i"), T(" + 0.2·"), SUBc([T("WSF")], "n,i")], "13"),
-  flag("Eq. (13) is an empirically recovered fit (n=423, max abs. residual 0.00046), not a value confirmed from the original processing script -- state this explicitly in the paper and, if possible, confirm against the source QGIS model before submission"),
+  pRuns([
+    RH("Equation (13) is an empirically recovered fit, not a value taken from the original processing script. We checked the project's QGIS Processing History log and the saved QGIS project file for a stored expression -- every layer's expressionfields element in the project file is empty, confirming UMI_w was computed once as a static value rather than as a virtual/expression field, and no Field Calculator run creating it appears in the Processing History log. The formula above (n=423, maximum absolute residual 0.00046) is therefore reported as the best available reconstruction rather than a confirmed original expression."),
+  ]),
 
   h2("D. Standardization and Dimensionality Reduction"),
   p("The five morphology indicators (building count, density, mean/maximum/standard-deviation of footprint area) were z-score standardized across all grid cells,"),
@@ -381,8 +383,10 @@ const resultsChildren2 = [
   ]),
 
   h1("Acknowledgment"),
-  p("The authors would like to thank the Commissioner of the Bhopal Municipal Corporation (BMC) and the Planning and Development Department of the concerned Madhya Pradesh urban development authority for providing the study area datasets, and also thank the GIS Lab of the Department of Geography, Faculty of Earth Science, IGNTU, India. The authors also thank the USGS and the Survey of India (SOI) for their freely available satellite images and datasets. The authors would also like to express sincere gratitude to the entire editorial board and reviewers for their insightful comments and suggestions, which have significantly improved the manuscript."),
-  flag("confirm the exact Bhopal-side institution names/titles above (e.g., the specific MP urban development authority you actually obtained data from) before submission"),
+  pRuns([
+    RH("The authors would like to thank the GIS Lab of the Department of Geography, Faculty of Earth Science, IGNTU, India, for computing facilities, and the developers of the Google Research Open Buildings and World Settlement Footprint datasets for making them openly available."),
+    RN(" The authors also thank the USGS and the Survey of India (SOI) for their freely available satellite images and datasets. The authors would also like to express sincere gratitude to the entire editorial board and reviewers for their insightful comments and suggestions, which have significantly improved the manuscript."),
+  ]),
 
 ];
 
