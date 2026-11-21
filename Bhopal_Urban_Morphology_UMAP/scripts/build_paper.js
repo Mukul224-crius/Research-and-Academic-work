@@ -6,10 +6,16 @@ const {
   Math: OMath, MathRun, MathFraction, MathSubScript, MathSuperScript, MathRadical, MathSum,
 } = require("docx");
 
+// ---------- real IEEE conference template (author-supplied) ----------
+// externalStyles + a post-build numbering.xml splice (see end of file) make
+// Word apply the template's own named styles -- including the automatic
+// "I.", "A.", "Fig. N." and "[n]" numbering baked into Heading1/Heading2/
+// figurecaption/references via their linked abstract numbering lists --
+// instead of us hand-typing those prefixes as plain text.
+const TPL = "/home/user/Research-and-Academic-work/Bhopal_Urban_Morphology_UMAP/ieee_template/extracted";
+const externalStyles = fs.readFileSync(`${TPL}/word/styles.xml`, "utf-8");
+
 // ---------- native Word equation (OMML) helpers ----------
-// Matches the senior co-author paper's convention of real embedded equation
-// objects (proper stacked fractions/roots/sums) rather than unicode-text
-// approximations of math.
 function T(text) { return new MathRun(text); }
 function SUB(baseText, subText) { return new MathSubScript({ children: [T(baseText)], subScript: [T(subText)] }); }
 function SUBc(baseChildren, subText) { return new MathSubScript({ children: baseChildren, subScript: [T(subText)] }); }
@@ -18,80 +24,64 @@ function FRAC(numChildren, denChildren) { return new MathFraction({ numerator: n
 function RAD(children) { return new MathRadical({ children }); }
 function SUMSUB(subText, bodyChildren) { return new MathSum({ subScript: [T(subText)], children: bodyChildren }); }
 function SUMSUBSUP(subText, supText, bodyChildren) { return new MathSum({ subScript: [T(subText)], superScript: [T(supText)], children: bodyChildren }); }
+// "equation" style defines its own center + right tab stops (126pt / 252pt,
+// calibrated to one column's width) -- a leading/mid tab puts the equation
+// on the center stop and a trailing tab puts the number flush right,
+// exactly like the template's own worked example.
 function mathEq(mathChildren, num) {
   return new Paragraph({
-    alignment: AlignmentType.CENTER,
-    spacing: { before: 60, after: 100 },
+    style: "equation",
     children: [
+      new TextRun({ text: "\t" }),
       new OMath({ children: mathChildren }),
-      ...(num ? [new TextRun({ text: `    (${num})`, size: 20 })] : []),
+      ...(num ? [new TextRun({ text: `\t(${num})` })] : []),
     ],
   });
 }
 
 const FIG = "/home/user/Research-and-Academic-work/Bhopal_Urban_Morphology_UMAP/figures";
-const PAGE_W = 12240, PAGE_H = 15840, MARGIN = 1080;
-const COL_WIDTH_EMU = 3300000; // ~half-page column width at 2-col, in EMU-ish scale used below
+const PAGE_W = 12240, PAGE_H = 15840;
+// Template's exact margins (pt -> twips, 20 twips/pt): top 54pt/1080,
+// bottom 72pt/1440, left/right 44.65-45.35pt/~893-907 (using the body
+// section's own 45.35pt), header/footer 36pt/720, column gutter 18pt/360.
+const MARGIN_TOP = 1080, MARGIN_BOTTOM = 1440, MARGIN_SIDE = 907, MARGIN_HF = 720;
 
-// ---------- helpers ----------
-// IMPORTANT (kept for future docx-js builds of this kind of paper): do NOT use
-// docx-js HeadingLevel.* styles for section titles. Word renders every
-// heading-styled paragraph with a clickable outline/collapse triangle in the
-// left margin during editing -- this is normal Word behavior for heading
-// styles, not a bug, but it looks wrong in a print-style IEEE draft. Using
-// plain bold paragraphs (no outline level) avoids it entirely.
+// ---------- helpers using the template's named styles ----------
 function h1(text) {
-  return new Paragraph({
-    spacing: { before: 220, after: 100 },
-    border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: "0B0B0B", space: 2 } },
-    children: [new TextRun({ text, bold: true, size: 21 })],
-  });
+  // Numbered top-level section (Heading1 style carries Roman-numeral
+  // auto-numbering via its linked abstract list -- do not type "I. " etc.)
+  return new Paragraph({ style: "Heading1", children: [new TextRun({ text, bold: true, size: 20 })] });
+}
+function h1Unnumbered(text) {
+  // Acknowledgment / References: unnumbered component heads (Heading5 in
+  // this template, per its own "(Heading 5)" instructional text).
+  return new Paragraph({ style: "Heading5", children: [new TextRun({ text, bold: true, size: 20 })] });
 }
 function h2(text) {
-  return new Paragraph({ spacing: { before: 160, after: 80 }, children: [new TextRun({ text, bold: true, italics: true, size: 19 })] });
+  // Lettered subsection (Heading2 carries "A.", "B." auto-numbering).
+  return new Paragraph({ style: "Heading2", children: [new TextRun({ text, size: 20 })] });
 }
 function p(text, opts = {}) {
-  return new Paragraph({ spacing: { after: 120 }, alignment: AlignmentType.JUSTIFIED, children: [new TextRun({ text, size: 20, ...opts })] });
+  return new Paragraph({ style: "BodyText", children: [new TextRun({ text, size: 20, ...opts })] });
 }
-function pRuns(runs, opts = {}) {
-  return new Paragraph({ spacing: { after: 120 }, alignment: AlignmentType.JUSTIFIED, ...opts, children: runs });
+function pRuns(runs) {
+  return new Paragraph({ style: "BodyText", children: runs });
 }
-// Plain and highlighted inline runs, for marking exactly which text is new
-// or changed in this AGERS-2026 reviewer-response revision (yellow
-// highlight), so the delta is visible directly in the manuscript itself
-// rather than only in the separate response letter.
 function RN(text, opts = {}) { return new TextRun({ text, size: 20, ...opts }); }
 function RH(text, opts = {}) { return new TextRun({ text, size: 20, highlight: "yellow", ...opts }); }
 function flag(text) {
   return new Paragraph({
-    spacing: { after: 120 },
+    style: "BodyText",
     children: [new TextRun({ text: "[AUTHOR TO CONFIRM: " + text + "]", size: 20, italics: true, color: "C00000" })],
   });
 }
-function eq(text, num) {
-  // Approximated inline "equation" formatting (centered, serif-ish, unicode math glyphs).
-  // Recommend authors convert these to native Word/MathType equations before final submission.
-  return new Paragraph({
-    alignment: AlignmentType.CENTER,
-    spacing: { before: 60, after: 100 },
-    children: [
-      new TextRun({ text, italics: true, size: 20, font: "Cambria Math" }),
-      ...(num ? [new TextRun({ text: `    (${num})`, size: 20, italics: false })] : []),
-    ],
-  });
-}
 function caption(text) {
-  return new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 80, after: 200 }, children: [new TextRun({ text, italics: true, size: 18 })] });
+  // figurecaption style auto-numbers "Fig. N." via its linked list -- the
+  // text here is only what follows the number.
+  return new Paragraph({ style: "figurecaption", children: [new TextRun({ text, italics: true, size: 16 })] });
 }
 function captionRuns(runs) {
-  return new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 80, after: 200 }, children: runs });
-}
-function cell(text, opts = {}) {
-  return new TableCell({
-    width: { size: opts.width || 1000, type: WidthType.DXA },
-    shading: opts.header ? { type: ShadingType.CLEAR, fill: "D9D9D9" } : undefined,
-    children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text, bold: !!opts.header, size: 16 })] })],
-  });
+  return new Paragraph({ style: "figurecaption", children: runs });
 }
 function noBorderCell(children, width) {
   return new TableCell({
@@ -100,8 +90,6 @@ function noBorderCell(children, width) {
     children,
   });
 }
-
-// full-bleed figure paragraph, used inside single-column sections
 function figureFull(path, widthPx, heightPx, maxWidthEMU = 9500000) {
   const ratio = heightPx / widthPx;
   const wEMU = maxWidthEMU;
@@ -112,12 +100,11 @@ function figureFull(path, widthPx, heightPx, maxWidthEMU = 9500000) {
     children: [new ImageRun({ type: "png", data: fs.readFileSync(path), transformation: { width: wEMU / 9525, height: hEMU / 9525 } })],
   });
 }
-
 function twoColSection(children) {
   return {
     properties: {
       type: SectionType.CONTINUOUS,
-      page: { size: { width: PAGE_W, height: PAGE_H }, margin: { top: 1440, bottom: 1440, left: MARGIN, right: MARGIN } },
+      page: { size: { width: PAGE_W, height: PAGE_H }, margin: { top: MARGIN_TOP, bottom: MARGIN_BOTTOM, left: MARGIN_SIDE, right: MARGIN_SIDE, header: MARGIN_HF, footer: MARGIN_HF } },
       column: { count: 2, space: 360 },
     },
     children,
@@ -127,43 +114,33 @@ function oneColSection(children) {
   return {
     properties: {
       type: SectionType.CONTINUOUS,
-      page: { size: { width: PAGE_W, height: PAGE_H }, margin: { top: 1440, bottom: 1440, left: MARGIN, right: MARGIN } },
+      page: { size: { width: PAGE_W, height: PAGE_H }, margin: { top: MARGIN_TOP, bottom: MARGIN_BOTTOM, left: MARGIN_SIDE, right: MARGIN_SIDE, header: MARGIN_HF, footer: MARGIN_HF } },
       column: { count: 1 },
     },
     children,
   };
 }
 
-// ================= Cluster profile numbers (for text references only -- table itself is now an image) =================
-const clusterRows = [
-  ["0", "Low-Density Residential", "71.59", "0.02", "247.16", "1940.45", "348.67"],
-  ["1", "Open Land / Water", "2.00", "0.00", "10.43", "17.00", "6.56"],
-  ["2", "Urban Core / High-Intensity", "962.26", "0.32", "343.92", "5317.01", "482.23"],
-  ["3", "Medium-Density Residential", "403.81", "0.08", "179.76", "2115.31", "231.87"],
-  ["4", "Sparse Peri-Urban", "30.99", "0.01", "107.07", "381.57", "83.41"],
-  ["5", "Compact Urban Fabric", "315.02", "0.12", "416.92", "6674.99", "735.70"],
-];
-
-// ================= Title / Authors / Abstract (UNCHANGED from prior draft) =================
+// ================= Title / Authors / Abstract =================
 const title = new Paragraph({
-  alignment: AlignmentType.CENTER,
-  spacing: { after: 200 },
+  style: "papertitle",
   children: [new TextRun({
     text: "Machine Learning-Based Urban Morphological Signature Mapping Using Open Building Footprints and UMAP Clustering: A Grid-Based Assessment of Bhopal City, India",
-    bold: true, size: 48, // 24pt, matching the reference paper's title size (was 15pt -- too small)
+    bold: true, size: 48,
   })],
 });
 function authorBlock(name, dept, email, orcid) {
-  return new Paragraph({
-    alignment: AlignmentType.CENTER,
-    spacing: { after: 40 },
-    children: [
-      new TextRun({ text: name, size: 20 }),
-      new TextRun({ text: dept, size: 18, break: 1 }),
-      new TextRun({ text: email, size: 18, break: 1 }),
-      new TextRun({ text: orcid, size: 18, break: 1 }),
-    ],
-  });
+  return [
+    new Paragraph({ style: "Author", children: [new TextRun({ text: name, size: 22 })] }),
+    new Paragraph({
+      style: "Affiliation",
+      children: [
+        new TextRun({ text: dept, size: 20 }),
+        new TextRun({ text: email, size: 20, break: 1 }),
+        new TextRun({ text: orcid, size: 20, break: 1 }),
+      ],
+    }),
+  ];
 }
 const deptLine = "Department of Geography, Faculty of Earth Science, Indira Gandhi National Tribal University, Amarkantak, Madhya Pradesh, India";
 const noBorders = { top: { style: BorderStyle.NONE }, bottom: { style: BorderStyle.NONE }, left: { style: BorderStyle.NONE }, right: { style: BorderStyle.NONE }, insideHorizontal: { style: BorderStyle.NONE }, insideVertical: { style: BorderStyle.NONE } };
@@ -173,27 +150,37 @@ const authors = new Table({
   rows: [
     new TableRow({
       children: [
-        noBorderCell([authorBlock("Mukul Maravi*", deptLine, "research.mukul.maravi@igntu.ac.in", "https://orcid.org/0009-0004-4960-9666")], 3200),
-        noBorderCell([authorBlock("Dr. Janki Prasad", deptLine, "janki.prasad@igntu.ac.in", "https://orcid.org/0009-0003-8682-4405")], 3200),
-        noBorderCell([authorBlock("Bikash Das (IEEE Member)", deptLine, "ressch.bikash.das@igntu.ac.in", "https://orcid.org/0009-0004-8767-7643")], 3200),
+        noBorderCell(authorBlock("Mukul Maravi*", deptLine, "research.mukul.maravi@igntu.ac.in", "https://orcid.org/0009-0004-4960-9666"), 3200),
+        noBorderCell(authorBlock("Dr. Janki Prasad", deptLine, "janki.prasad@igntu.ac.in", "https://orcid.org/0009-0003-8682-4405"), 3200),
+        noBorderCell(authorBlock("Bikash Das (IEEE Member)", deptLine, "ressch.bikash.das@igntu.ac.in", "https://orcid.org/0009-0004-8767-7643"), 3200),
       ],
     }),
   ],
 });
 
-const abstractHeading = new Paragraph({ spacing: { before: 160, after: 60 }, children: [new TextRun({ text: "Abstract", bold: true, italics: true, size: 20 })] });
-const abstractRuns = [
-  RN("Rapid and often unplanned urban expansion in developing-country cities has outpaced the capacity of conventional planning tools to monitor heterogeneous built-form change, motivating data-driven approaches that classify settlement patterns directly from building-level geometry [1]. In India, the urban population is projected to rise from 31.8% (2011) to 38.2% by 2036, with urban growth accounting for nearly three-fourths of total national population increase [9], intensifying pressure on peripheral and municipal land in Tier-II cities that remain understudied relative to major metros. Bhopal, the capital of Madhya Pradesh, exemplifies this transition, combining a dense historic core with rapidly expanding peri-urban fringes, yet lacks a quantitative, grid-based characterization of its morphological heterogeneity. This study develops a machine learning framework integrating Open Building Footprints (143,864 structures) and World Settlement Footprint data within a 1 km x 1 km analytical grid (495 cells; ~411 km2 municipal extent, UTM Zone 43N). Five morphological indicators were computed per cell, standardized, projected via UMAP, and partitioned using K-Means into six urban morphological signatures. Cluster validity was independently assessed using silhouette and Davies-Bouldin indices in both the UMAP embedding and the original indicator space, and spatial coherence was verified with global and local Moran's I under an explicitly defined contiguity structure. The Urban Core cluster (962.3 buildings/grid; density 0.32) overlapped 62.5% with the statistically significant Local Moran's I High-High cluster, "),
-  RH("consistent with a non-random, spatially coherent urban core -- a result that corroborates this one cluster specifically rather than constituting an independent accuracy assessment of the full six-cluster classification."),
-  RN(" The framework offers a replicable, transparently caveated, low-cost workflow for morphology-based urban monitoring, demonstrated for Bhopal and "),
-  RH("designed for extension to other data-scarce Indian cities."),
-];
-const keywordsPara = pRuns([
-  new TextRun({ text: "Keywords—", bold: true, italics: true, size: 20 }),
-  new TextRun({ text: "Urban Morphology; Open Building Footprints; UMAP; K-Means Clustering; Local Moran's I; Spatial Autocorrelation; Cluster Validation; Urban Morphological Index; Bhopal; GIS", italics: true, size: 20 }),
-]);
+// Abstract/Keywords styles default to bold (Abstract) / bold+italic
+// (Keywords, based-on Abstract); explicit run formatting below overrides
+// that for the lead-in vs. body text regardless of the inherited default,
+// matching the standard "Abstract—" / "Keywords—" bold lead-in convention.
+const abstractPara = new Paragraph({
+  style: "Abstract",
+  children: [
+    new TextRun({ text: "Abstract—", bold: true, italics: false, size: 18 }),
+    RN("Rapid and often unplanned urban expansion in developing-country cities has outpaced the capacity of conventional planning tools to monitor heterogeneous built-form change, motivating data-driven approaches that classify settlement patterns directly from building-level geometry [1]. In India, the urban population is projected to rise from 31.8% (2011) to 38.2% by 2036, with urban growth accounting for nearly three-fourths of total national population increase [9], intensifying pressure on peripheral and municipal land in Tier-II cities that remain understudied relative to major metros. Bhopal, the capital of Madhya Pradesh, exemplifies this transition, combining a dense historic core with rapidly expanding peri-urban fringes, yet lacks a quantitative, grid-based characterization of its morphological heterogeneity. This study develops a machine learning framework integrating Open Building Footprints (143,864 structures) and World Settlement Footprint data within a 1 km x 1 km analytical grid (495 cells; ~411 km2 municipal extent, UTM Zone 43N). Five morphological indicators were computed per cell, standardized, projected via UMAP, and partitioned using K-Means into six urban morphological signatures. Cluster validity was independently assessed using silhouette and Davies-Bouldin indices in both the UMAP embedding and the original indicator space, and spatial coherence was verified with global and local Moran's I under an explicitly defined contiguity structure. The Urban Core cluster (962.3 buildings/grid; density 0.32) overlapped 62.5% with the statistically significant Local Moran's I High-High cluster, ", { bold: false, italics: true, size: 18 }),
+    RH("consistent with a non-random, spatially coherent urban core -- a result that corroborates this one cluster specifically rather than constituting an independent accuracy assessment of the full six-cluster classification.", { bold: false, italics: true, size: 18 }),
+    RN(" The framework offers a replicable, transparently caveated, low-cost workflow for morphology-based urban monitoring, demonstrated for Bhopal and ", { bold: false, italics: true, size: 18 }),
+    RH("designed for extension to other data-scarce Indian cities.", { bold: false, italics: true, size: 18 }),
+  ],
+});
+const keywordsPara = new Paragraph({
+  style: "Keywords",
+  children: [
+    new TextRun({ text: "Keywords—", bold: true, italics: false, size: 18 }),
+    new TextRun({ text: "Urban Morphology; Open Building Footprints; UMAP; K-Means Clustering; Local Moran's I; Spatial Autocorrelation; Cluster Validation; Urban Morphological Index; Bhopal; GIS", bold: false, italics: true, size: 18 }),
+  ],
+});
 
-// ================= References (12 total: original 8 + 4 new) =================
+// ================= References =================
 const refs = [
   "W. C. Jochem, D. R. Leasure, O. Pannell, H. R. Chamberlain, P. Jones, and A. J. Tatem, \"Classifying settlement types from multi-scale spatial patterns of building footprints,\" Environ. Plan. B: Urban Anal. City Sci., vol. 48, no. 5, pp. 1161-1179, 2021, doi: 10.1177/2399808320921208.",
   "L. McInnes, J. Healy, and J. Melville, \"UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction,\" arXiv:1802.03426, 2018, doi: 10.48550/arXiv.1802.03426.",
@@ -207,35 +194,30 @@ const refs = [
   "A. Getis and J. K. Ord, \"The Analysis of Spatial Association by Use of Distance Statistics,\" Geogr. Anal., vol. 24, no. 3, pp. 189-206, 1992, doi: 10.1111/j.1538-4632.1992.tb00261.x.",
   "P. A. P. Moran, \"Notes on Continuous Stochastic Phenomena,\" Biometrika, vol. 37, no. 1/2, pp. 17-23, 1950, doi: 10.1093/biomet/37.1-2.17.",
 ];
-const refParas = refs.map((r, i) => new Paragraph({
-  spacing: { after: 80 },
-  indent: { left: 200, hanging: 200 },
-  children: [new TextRun({ text: `[${i + 1}] ${r}`, size: 18 })],
+// references style auto-numbers "[n]" via its linked list -- no manual
+// "[1] " prefix.
+const refParas = refs.map((r) => new Paragraph({
+  style: "references",
+  children: [new TextRun({ text: r, size: 16 })],
 }));
 
 // ================= Body sections (two-column) =================
-// Title/authors/abstract/keywords must live in their own single-column
-// section. Placed inside a two-column section, the title paragraph gets
-// squeezed into just the first column's width instead of spanning the
-// full page -- that was the actual bug behind the "title concentrated on
-// the left side" problem.
 const titleBlockChildren = [
-  title, authors, new Paragraph({ text: "" }), abstractHeading, pRuns(abstractRuns), keywordsPara,
+  title, authors, new Paragraph({ text: "" }), abstractPara, keywordsPara,
 ];
 
 const introChildren = [
-  h1("I. Introduction"),
+  h1("Introduction"),
   p("Rapid and often unplanned urban expansion in developing-country cities has outpaced the capacity of conventional planning instruments to monitor heterogeneous built-form change. Where land-use/land-cover (LULC) classification captures coarse functional categories, it does not, by itself, quantify the physical morphology of the built environment -- building density, footprint size, and their spatial variability -- that governs infrastructure loading, hazard exposure, and service delivery at the neighbourhood scale. This has motivated a shift toward data-driven approaches that classify settlement patterns directly from building-level geometry rather than from spectral land-cover classes alone [1]."),
   p("In India, the urban population is projected to rise from 31.8% in 2011 to 38.2% by 2036, with urban areas absorbing nearly three-fourths of the country's total population increase over this period [9]. This growth is concentrated disproportionately in peripheral and municipal land around Tier-II and Tier-III cities, which remain comparatively understudied relative to the country's major metropolitan regions. Bhopal, the capital of Madhya Pradesh, is representative of this transition, combining a dense historic core with rapidly expanding peri-urban fringes, yet a quantitative, grid-based characterization of its internal morphological heterogeneity -- as distinct from a functional LULC classification -- has not been established."),
   p("This study addresses that gap with a machine-learning framework that (i) computes a set of building-level morphological indicators for Bhopal within a regular 1 km analytical grid using Open Building Footprints (OBF) and World Settlement Footprint (WSF) data, with every derived field-level formula traced directly against the project's own attribute tables rather than assumed; (ii) reduces and clusters this indicator space using UMAP and K-Means to derive interpretable urban morphological signatures; (iii) subjects the resulting clusters to independent statistical validation -- internal cluster-validity indices computed in more than one feature space, and spatial autocorrelation testing via global and local Moran's I with an explicit spatial-weights definition; and (iv) reports both the favourable and unfavourable outcomes of that validation transparently, including where the chosen cluster solution is not the statistically optimal one and where a source formula could not be independently confirmed."),
-
 ];
 
 const methodsChildren = [
-  h1("II. Materials and Methods"),
-  h2("A. Study Area"),
+  h1("Materials and Methods"),
+  h2("Study Area"),
   p("Bhopal, the capital of the central Indian state of Madhya Pradesh, is administered by the Bhopal Municipal Corporation and is characterized by a dense historic core interspersed with several large natural and artificial lakes, surrounded by rapidly expanding peri-urban development. A regular 1 km x 1 km analytical grid was constructed over the Bhopal Municipal Corporation boundary in the WGS 1984 UTM Zone 43N projected coordinate system (Fig. 1), yielding 495 grid cells covering approximately 411.0 km2. Of these, 423 cells (85.5%) contained sufficient building-footprint coverage for full indicator computation; the remaining 72 cells lie at the municipal boundary margin and are predominantly open land or water."),
-  h2("B. Data Sources"),
+  h2("Data Sources"),
   pRuns([
     RN("Building geometry was drawn from "),
     RH("the Google Research Open Buildings v3 polygons FeatureCollection (Earth Engine asset GOOGLE/Research/open-buildings/v3/polygons)"),
@@ -244,7 +226,7 @@ const methodsChildren = [
   ]),
   p("The World Settlement Footprint (WSF) 2015 product [4] was used as a complementary settlement-extent mask. Both datasets were integrated with the 1 km analytical grid in QGIS 3.44 (Fig. 1)."),
 
-  h2("C. Field-Level Definitions and Verified Formulas"),
+  h2("Field-Level Definitions and Verified Formulas"),
   p("To keep every reported statistic traceable to the project's own attribute tables, each per-cell field used in this study is defined below and, where the underlying processing expression was not directly available, independently reverse-derived and numerically verified against the stored shapefile values rather than assumed."),
   p("1) Grid cell area: for a complete (non-boundary) cell,"),
   mathEq([SUB("A", "grid"), T(" = 1 km × 1 km = 1,000,000 "), SUP([T("m")], "2")], "1"),
@@ -287,20 +269,20 @@ const methodsChildren = [
     RH("Equation (13) is an empirically recovered fit, not a value taken from the original processing script. We checked the project's QGIS Processing History log and the saved QGIS project file for a stored expression -- every layer's expressionfields element in the project file is empty, confirming UMI_w was computed once as a static value rather than as a virtual/expression field, and no Field Calculator run creating it appears in the Processing History log. The formula above (n=423, maximum absolute residual 0.00046) is therefore reported as the best available reconstruction rather than a confirmed original expression."),
   ]),
 
-  h2("D. Standardization and Dimensionality Reduction"),
+  h2("Standardization and Dimensionality Reduction"),
   p("The five morphology indicators (building count, density, mean/maximum/standard-deviation of footprint area) were z-score standardized across all grid cells,"),
   mathEq([SUB("Z", "ij"), T(" = "), FRAC([T("("), SUB("X", "ij"), T(" − "), SUB("μ", "j"), T(")")], [SUB("σ", "j")])], "14"),
   p("and projected into a two-dimensional embedding using UMAP [2], which preserves local neighbourhood structure, with hyperparameters n_neighbors=15, min_dist=0.10, n_components=2, metric=Euclidean, and random_state=42:"),
   mathEq([T("X (n×5) → Z (n×5) → Y (n×2)")], "15"),
 
-  h2("E. K-Means Clustering"),
+  h2("K-Means Clustering"),
   p("K-Means [5] with k=6 was applied to the UMAP embedding Y, minimizing the within-cluster sum of squares,"),
   mathEq([T("min "), SUMSUBSUP("k=1", "K", [SUMSUB("xᵢ∈Cₖ", [SUP([T("‖"), SUB("x", "i"), T(" − "), SUB("μ", "k"), T("‖")], "2")])]), T(" ,  K = 6")], "16"),
 
-  h2("F. Cluster Validity Assessment"),
+  h2("Cluster Validity Assessment"),
   p("The silhouette coefficient [6] and Davies-Bouldin index [7] were computed for the k=6 solution in two independent feature spaces -- the 2D UMAP embedding (n=495) and the original standardized five-indicator space (n=422 complete, non-singleton cells) -- to test whether cluster separation reflects genuine structure or is partly an artifact of the UMAP projection. A k-scan from k=2 to k=10 additionally refit K-Means on the same UMAP embedding at each k, recording the silhouette score."),
 
-  h2("G. Spatial Autocorrelation Validation"),
+  h2("Spatial Autocorrelation Validation"),
   p("Two distinct Moran's I analyses are reported and are kept explicitly separate because they were not built with the same spatial-weights definition. First, a Local Moran's I (LISA) map was produced in the original GIS workflow (Fig. 3) using k-nearest-neighbor weights (k=5) and a 999-permutation significance test, classifying each cell into High-High, Low-High, Low-Low, or High-Low quadrants at p<0.05."),
   p("Second, and separately, as an independent validation check for this study, we computed a global Moran's I on the composite UMI surface using an explicitly defined rook (4-neighbor edge) contiguity matrix built directly from the regular grid's row and column indices, row-standardized, with significance likewise assessed via a 999-permutation test. Because the two analyses use different neighbourhood definitions (k=5 nearest-neighbor for the original LISA map vs. rook contiguity for this validation check), their results are complementary evidence rather than a single computation reported twice. The general form of Moran's I is [11], and of the local statistic [3], [10]:"),
   mathEq([
@@ -317,22 +299,15 @@ const methodsChildren = [
   ], "18"),
 ];
 
-// ================= Full-width figure section 1 (data integration map) =================
-const fig1Section = [
-  figureFull(`${FIG}/fig1_data_integration_map.png`, 2000, 1259, 9500000),
-  caption("Fig. 1. (a) 1 km analytical grid, (b) World Settlement Footprint (WSF) mask, and (c) Open Building Footprints (OBF), all clipped to the Bhopal Municipal Corporation boundary (UTM Zone 43N)."),
-];
-
 // ================= Results (two-column) =================
 const resultsChildren = [
-  h1("III. Results and Discussion"),
-  h2("A. Urban Morphological Cluster Profiles"),
+  h1("Results and Discussion"),
+  h2("Urban Morphological Cluster Profiles"),
   p("The K-Means solution delineated six morphological signatures (Fig. 2, Fig. 4): Open Land/Water (Cluster 1, n=73), Sparse Peri-Urban Development (Cluster 4, n=85), Low-Density Residential (Cluster 0, n=70), Medium-Density Residential (Cluster 3, n=62), Compact Urban Fabric (Cluster 5, n=133), and Urban Core/High-Intensity Built-Up (Cluster 2, n=72). Cluster 2 recorded the highest mean building count (962.26 per grid cell) and density (0.32), consistent with a central business district / high-intensity core. Cluster 5 recorded the largest mean (416.92 m²), maximum (6674.99 m²), and most variable (735.70 m² standard deviation) footprint sizes, consistent with large institutional, commercial, or mixed-use structures (Fig. 4)."),
 ];
 
-
 const resultsChildren2 = [
-  h2("B. Cluster Validity"),
+  h2("Cluster Validity"),
   p("In the UMAP embedding, the k=6 solution achieved an overall silhouette score of 0.567 (Davies-Bouldin = 0.554), indicating reasonable but uneven separation: Cluster 1 (Open Land/Water) was extremely well separated (mean silhouette 0.983), while Cluster 5 (Compact Urban Fabric, the largest cluster) was the weakest-defined (mean silhouette 0.308) (Fig. 5a)."),
   p("When the same k=6 labels were evaluated in the original standardized five-indicator space (n=422 complete cells), the overall silhouette score fell to 0.229 (Davies-Bouldin = 1.090) -- markedly lower than in the UMAP embedding, consistent with the known tendency of UMAP to emphasize local neighbourhood structure over global distance preservation, which can numerically inflate apparent cluster separation. We report this openly as a limitation rather than presenting only the more favourable UMAP-space figure."),
   p("The k-scan (Fig. 5b) further shows that k=6 is not the silhouette-maximizing solution: k=9 (0.598) and k=10 (0.592) both exceed k=6 (0.567), while k=2 scores highest (0.844) but corresponds to a coarse urban/non-urban split of limited interpretive value. Accordingly, k=6 is justified on typological interpretability and correspondence with established urban morphology classes, not on statistical optimality -- a distinction stated explicitly rather than left implicit."),
@@ -344,7 +319,7 @@ const resultsChildren2 = [
     RN(" -- better than the UMAP-based labels scored in the raw-indicator space (0.229, Section III-B above) but still well below the UMAP embedding's own 0.567. This indicates that UMAP is not merely a visualization convenience here: it materially reshapes the partition, consistent with its designed role in unfolding non-convex local structure that Euclidean K-Means cannot separate directly in the original five-dimensional space. A k-scan of the raw-space K-Means baseline (k=2..10) peaked at k=3 (silhouette=0.487) and declined gradually to k=6 (0.406), a different optimum than the UMAP-space scan's k=9/10 -- underscoring that no single method-independent k is privileged across representations, and reinforcing that the six-class solution is best understood as a typologically motivated, UMAP-assisted partition rather than a representation-independent ground truth."),
   ]),
 
-  h2("C. Spatial Structure of the Morphological Signatures"),
+  h2("Spatial Structure of the Morphological Signatures"),
   pRuns([
     RN("Global Moran's I on the UMI composite surface, computed with rook contiguity, was 0.4324 (Z=12.05, permutation-test p=0.001, n=999 permutations) (Fig. 5c) -- strong, highly significant positive spatial autocorrelation, meaning high- and low-intensity cells form contiguous spatial clusters rather than a random arrangement. "),
     RH("Because the UMI is itself derived from the same building-count, density and footprint-area measures used as clustering inputs, this result is evidence that the underlying morphological surface is spatially structured, not an independent validation of the six-cluster partition;"),
@@ -356,7 +331,7 @@ const resultsChildren2 = [
     RH("This check validates the Urban Core cluster's spatial coherence; it does not by itself establish the validity of the remaining five clusters or of the six-cluster partition overall, which rests primarily on the internal cluster-validity indices in Section III-B and would require independent ground-truth or socioeconomic reference data to assess directly (Section III-D)."),
   ]),
 
-  h2("D. Limitations"),
+  h2("Limitations"),
   pRuns([
     RN("This analysis is cross-sectional and does not capture temporal morphological change. The choice of a 1 km analytical grid necessarily averages within-cell morphological heterogeneity and may obscure block- or neighborhood-scale variation that a finer grid would resolve. "),
     RH("A substantially finer grid (e.g., 250 m) was not evaluated here: the raw building-footprint geometry underlying the present per-cell indicators is not retained at the resolution required to re-aggregate below 1 km, and a 250 m re-aggregation would itself introduce a competing instability, since a large share of peripheral cells would contain very few buildings, making variance-based indicators such as footprint-area SD statistically unreliable at that scale. A multi-resolution sensitivity analysis, testing grid sizes between 250 m and 1 km and explicitly weighing ecological-fallacy risk against per-cell sample-size stability, is identified as priority future work."),
@@ -372,7 +347,7 @@ const resultsChildren2 = [
     RH("Cluster labels have not yet been validated against independent ground-truth imagery (e.g., high-resolution satellite basemaps) or socioeconomic data; such a check, applied to a stratified sample of cells across all six clusters, is identified as priority future work alongside the grid-resolution sensitivity analysis above."),
   ]),
 
-  h1("IV. Conclusion"),
+  h1("Conclusion"),
   pRuns([
     RN("This study developed a machine-learning framework for grid-based urban morphological signature mapping in Bhopal, India, using Open Building Footprints and World Settlement Footprint data, with every derived field-level formula traced against the project's own attribute tables. Six morphological signatures were derived via UMAP and K-Means, and assessed using cluster-internal indices in two feature spaces and spatial-autocorrelation testing via global and local Moran's I under an explicit contiguity definition. We report both favourable results (global Moran's I=0.43, p=0.001; 62.5% spatial overlap between the Urban Core cluster and the LISA High-High hotspot) and unfavourable ones (weaker raw-space silhouette; k=6 not silhouette-optimal) transparently; "),
     RH("the spatial-autocorrelation checks corroborate the Urban Core cluster and the non-random structure of the UMI surface specifically, and are not an independent accuracy assessment of the full six-cluster classification."),
@@ -381,49 +356,39 @@ const resultsChildren2 = [
     RN(" and resolution of the confirmations flagged in Section III-D."),
   ]),
 
-  h1("Acknowledgment"),
+  h1Unnumbered("Acknowledgment"),
   pRuns([
     RH("The authors would like to thank the GIS Lab of the Department of Geography, Faculty of Earth Science, IGNTU, India, for computing facilities, and the developers of the Google Research Open Buildings and World Settlement Footprint datasets for making them openly available."),
     RN(" The authors also thank the USGS and the Survey of India (SOI) for their freely available satellite images and datasets. The authors would also like to express sincere gratitude to the entire editorial board and reviewers for their insightful comments and suggestions, which have significantly improved the manuscript."),
   ]),
-
 ];
 
 const referencesSection = [
-  h1("References"),
+  h1Unnumbered("References"),
   ...refParas,
 ];
 
 // ================= All figures batched on one dedicated page =================
-// Matches the senior co-author paper's convention: figures grouped together
-// near the end of the body text rather than interspersed inline.
 const allFiguresSection = [
   figureFull(`${FIG}/fig1_data_integration_map.png`, 2000, 1259, 6200000),
-  caption("Fig. 1. (a) 1 km analytical grid, (b) World Settlement Footprint (WSF) mask, and (c) Open Building Footprints (OBF), all clipped to the Bhopal Municipal Corporation boundary (UTM Zone 43N)."),
+  caption("(a) 1 km analytical grid, (b) World Settlement Footprint (WSF) mask, and (c) Open Building Footprints (OBF), all clipped to the Bhopal Municipal Corporation boundary (UTM Zone 43N)."),
   figureFull(`${FIG}/fig2_umap_projection.png`, 1402, 685, 6200000),
-  caption("Fig. 2. UMAP projection of the six urban morphological signature clusters."),
+  caption("UMAP projection of the six urban morphological signature clusters."),
   figureFull(`${FIG}/fig3_local_morans_i_map.png`, 2000, 1414, 6200000),
   captionRuns([
-    new TextRun({ text: "Fig. 3. Local Moran's I (LISA) cluster map of the Urban Morphological Index, computed using ", italics: true, size: 18 }),
-    new TextRun({ text: "k-nearest-neighbor weights (k=5) as defined in Section II-G", italics: true, size: 18, highlight: "yellow" }),
-    new TextRun({ text: ".", italics: true, size: 18 }),
+    new TextRun({ text: "Local Moran's I (LISA) cluster map of the Urban Morphological Index, computed using ", italics: true, size: 16 }),
+    new TextRun({ text: "k-nearest-neighbor weights (k=5) as defined in Section II-G", italics: true, size: 16, highlight: "yellow" }),
+    new TextRun({ text: ".", italics: true, size: 16 }),
   ]),
   figureFull(`${FIG}/dashboard1_cluster_profile.png`, 2174, 1280, 6200000),
-  caption("Fig. 4. Cluster profile dashboard: (a) mean building count, (b) mean built-up density, (c) grid cells per cluster, (d) mean footprint area, (e) maximum footprint area, (f) standard deviation of footprint area, by cluster."),
+  caption("Cluster profile dashboard: (a) mean building count, (b) mean built-up density, (c) grid cells per cluster, (d) mean footprint area, (e) maximum footprint area, (f) standard deviation of footprint area, by cluster."),
   figureFull(`${FIG}/dashboard2_validation.png`, 2374, 872, 6200000),
-  caption("Fig. 5. Validation dashboard: (a) silhouette score by cluster in UMAP space, (b) silhouette score across k=2..10, (c) global Moran's I permutation test (observed vs. null distribution)."),
+  caption("Validation dashboard: (a) silhouette score by cluster in UMAP space, (b) silhouette score across k=2..10, (c) global Moran's I permutation test (observed vs. null distribution)."),
 ];
 
 // ================= Assemble document =================
-// Body text runs continuously in two columns (Intro through Acknowledgment),
-// then all five figures are batched together on their own single-column
-// page, then References resume in two columns -- matching the senior
-// co-author paper's figure-batching convention.
 const finalDoc = new Document({
-  // IEEE papers (and the reference senior-author paper) use Times New Roman
-  // throughout -- without this, Word falls back to its default theme font
-  // (Calibri/Aptos), which is what made the title/body look mismatched.
-  styles: { default: { document: { run: { font: "Times New Roman" } } } },
+  externalStyles,
   sections: [
     oneColSection(titleBlockChildren),
     twoColSection([
@@ -438,6 +403,7 @@ const finalDoc = new Document({
 });
 
 Packer.toBuffer(finalDoc).then((buf) => {
-  fs.writeFileSync("/home/user/Research-and-Academic-work/Bhopal_Urban_Morphology_UMAP/Bhopal_Urban_Morphology_FullPaper_DRAFT.docx", buf);
-  console.log("Wrote docx v2");
+  const outPath = "/home/user/Research-and-Academic-work/Bhopal_Urban_Morphology_UMAP/Bhopal_Urban_Morphology_FullPaper_DRAFT.docx";
+  fs.writeFileSync(outPath, buf);
+  console.log("Wrote docx (template-styled, pre-splice)");
 });
