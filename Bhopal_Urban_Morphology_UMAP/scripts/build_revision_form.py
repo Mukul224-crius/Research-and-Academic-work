@@ -57,8 +57,10 @@ rows = [
      "joined via an “intersects” predicate (a boundary-crossing building is "
      "attributed in full to every cell it touches) and stated this "
      "explicitly, together with its effect on count- vs. density-based "
-     "comparisons.",
-     2, "Sec. II-B, II-C"),
+     "comparisons. Added an explicit note that OBF (2023) and WSF (2015) "
+     "have different temporal reference dates and are used as complementary "
+     "spatial layers rather than synchronous observations.",
+     2, "Sec. II-B, II-C (p.2); III-D (p.4)"),
 
     ("Reviewer 1, Recommended change 2: “Test clustering stability across "
      "random seeds, UMAP settings, and alternative grid sizes, and compare "
@@ -83,7 +85,7 @@ rows = [
      "reformatted into the official IEEE conference template (named "
      "paragraph styles, automatic section/figure/reference numbering, "
      "3-column author block, no author numbering, no hyperlinked emails).",
-     2, "Sec. II-C (equations); Figs. 1-5"),
+     "2-3, 5-7", "Sec. II-C (equations, pp.2-3); Figs. 1-5 (pp.5-7)"),
 
     ("Reviewer 2, Recommended change 2: “They should also strengthen the "
      "justification for the selected number of clusters, assess clustering "
@@ -95,7 +97,7 @@ rows = [
      "non-random structure and the Urban Core cluster specifically, and are "
      "not an independent accuracy assessment of the full six-cluster "
      "classification.",
-     4, "Sec. III-B, III-C, III-D"),
+     "4-5", "Sec. III-B, III-C (p.4); III-D (p.5)"),
 
     ("Reviewer 2, Recommended change 3: “Conclusions about transferability "
      "to other cities should align with the scope of the available "
@@ -104,7 +106,7 @@ rows = [
      "fact) to “designed for extension to other data-scarce Indian cities, "
      "pending independent testing in those settings” in the Abstract and "
      "Conclusion.",
-     1, "Abstract (p.1); Conclusion (p.5)"),
+     "1, 5", "Abstract (p.1); Conclusion (p.5)"),
 
     ("Reviewer 3, Recommended change 1: “Run testing with a much finer grid "
      "scale (e.g., 250m x 250m) to verify that the framework truly captures "
@@ -130,7 +132,7 @@ rows = [
      "expression exists anywhere recoverable; Eq. (13) is reported "
      "explicitly as the best available reconstruction, not a confirmed "
      "original formula.",
-     2, "Sec. II-B (p.2); II-C (p.3)"),
+     "2-3", "Sec. II-B (p.2); II-C (p.3)"),
 
     ("Reviewer 3, Recommended change 3: “Validate the clusters using "
      "independent field data samples (such as Google Earth satellite "
@@ -140,7 +142,7 @@ rows = [
      "a stratified visual check of a representative sample of cells from "
      "each of the six clusters against high-resolution satellite basemap "
      "imagery.",
-     4, "Sec. III-D"),
+     5, "Sec. III-D"),
 ]
 
 r = header_row + 1
