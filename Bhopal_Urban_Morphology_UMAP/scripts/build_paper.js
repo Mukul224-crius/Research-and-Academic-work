@@ -68,7 +68,13 @@ function pRuns(runs) {
   return new Paragraph({ style: "BodyText", children: runs });
 }
 function RN(text, opts = {}) { return new TextRun({ text, size: 20, ...opts }); }
-function RH(text, opts = {}) { return new TextRun({ text, size: 20, highlight: "yellow", ...opts }); }
+// NOTE: AGERS 2026's official accept email ("Revise your manuscript based on
+// the reviewer comment without any highlighting and coloring") prohibits
+// highlighting in the submitted camera-ready file. RH is kept as a distinct
+// name (so the source still marks which spans were added/changed this
+// revision round, for our own reference) but renders identically to RN --
+// no highlight property -- in the actual output.
+function RH(text, opts = {}) { return new TextRun({ text, size: 20, ...opts }); }
 function flag(text) {
   return new Paragraph({
     style: "BodyText",
@@ -377,7 +383,7 @@ const allFiguresSection = [
   figureFull(`${FIG}/fig3_local_morans_i_map.png`, 2000, 1414, 6200000),
   captionRuns([
     new TextRun({ text: "Local Moran's I (LISA) cluster map of the Urban Morphological Index, computed using ", italics: true, size: 16 }),
-    new TextRun({ text: "k-nearest-neighbor weights (k=5) as defined in Section II-G", italics: true, size: 16, highlight: "yellow" }),
+    new TextRun({ text: "k-nearest-neighbor weights (k=5) as defined in Section II-G", italics: true, size: 16 }),
     new TextRun({ text: ".", italics: true, size: 16 }),
   ]),
   figureFull(`${FIG}/dashboard1_cluster_profile.png`, 2174, 1280, 6200000),
