@@ -1,6 +1,5 @@
 import openpyxl
 from openpyxl.styles import Font, Alignment, Border, Side, PatternFill
-from openpyxl.utils import get_column_letter
 
 wb = openpyxl.Workbook()
 ws = wb.active
@@ -10,11 +9,10 @@ thin = Side(style="thin")
 border = Border(left=thin, right=thin, top=thin, bottom=thin)
 header_fill = PatternFill("solid", fgColor="D9D9D9")
 
-col_widths = {"A": 4, "B": 46, "C": 60, "D": 10, "E": 22}
+col_widths = {"A": 4, "B": 46, "C": 60, "D": 10, "E": 24}
 for col, w in col_widths.items():
     ws.column_dimensions[col].width = w
 
-# Title
 ws.merge_cells("B1:E1")
 ws["B1"] = "Revision Form for The Paper of AGERS 2026"
 ws["B1"].font = Font(bold=True, size=14)
@@ -40,110 +38,109 @@ for i, h in enumerate(headers):
     c.fill = header_fill
     c.border = border
 
+# Each row = one official numbered "Recommended changes" bullet, verbatim,
+# from the three reviews -- no weak-aspect text. Page numbers are from the
+# actual rendered 8-page camera-ready PDF (pdftoppm render of the current
+# docx); re-check once the authors' own Word/PDF eXpress pass renders the
+# native equation objects, which LibreOffice's headless renderer does not
+# draw, and could shift pagination slightly.
 rows = [
-    ("Reviewer 3: In-text section-referencing error -- Limitations section referred "
-     "to “Section IV-B” and “Section IV-D,” which do not exist (Section IV is the "
-     "Conclusion, with no subsections).",
-     "Corrected throughout: a manual section renumbering (Study Area merged into "
-     "Materials and Methods as II-A) had not been propagated into every cross-"
-     "reference. Fixed “Section IV-B”→“III-B”, “III-A”→“II-B”, the Fig. 3 "
-     "caption's nonexistent “III-F”→“II-G”, and “IV-D”→“III-D”. Every remaining "
-     "in-text section reference was verified against the corrected numbering.",
-     "", "Sec. II, III (throughout)"),
+    ("Reviewer 1, Recommended change 1: “Document the full data and "
+     "preprocessing workflow, including building-footprint provenance, "
+     "temporal compatibility with WSF 2015, handling of empty and singleton "
+     "cells, and assignment of buildings crossing grid boundaries. Explain "
+     "how clipped boundary-cell areas affect count-based comparisons.”",
+     "OBF provenance confirmed and stated (Google Open Buildings v3 polygons, "
+     "30 May 2023 snapshot, CC-BY 4.0/ODbL). Documented that 72/495 cells "
+     "with no buildings are zero-filled before standardization. Confirmed "
+     "from the authors' own QGIS Processing History that buildings are "
+     "joined via an “intersects” predicate (a boundary-crossing building is "
+     "attributed in full to every cell it touches) and stated this "
+     "explicitly, together with its effect on count- vs. density-based "
+     "comparisons.",
+     2, "Sec. II-B, II-C"),
 
-    ("Reviewers 1 & 2: Spatial-autocorrelation checks (global Moran's I on the UMI "
-     "surface; 62.5% Urban Core / LISA High-High overlap) were described in terms "
-     "that implied they validate the entire six-cluster classification, when the "
-     "UMI shares inputs with the clustering and the overlap supports only one "
-     "cluster.",
-     "Reworded in four places (Abstract, Results §III-C, Limitations §III-D, "
-     "Conclusion) to state explicitly that these checks corroborate the UMI "
-     "surface's non-random structure and the Urban Core cluster specifically, and "
-     "are not an independent accuracy assessment of the full classification.",
-     "", "Abstract; Sec. III-C, III-D; Conclusion"),
+    ("Reviewer 1, Recommended change 2: “Test clustering stability across "
+     "random seeds, UMAP settings, and alternative grid sizes, and compare "
+     "the results with K-Means applied directly to the standardized "
+     "indicators. Use these results to strengthen the justification for six "
+     "classes.”",
+     "Added a stability analysis: 10 random seeds and 9 UMAP hyperparameter "
+     "combinations scored against the original labeling via Adjusted Rand "
+     "Index (mean ARI 0.78-0.79); a plain K-Means baseline on the raw "
+     "5-indicator space (no UMAP) agreed only weakly (ARI=0.29), showing "
+     "UMAP materially reshapes the partition. (Alternative grid sizes could "
+     "not be tested this round -- see Reviewer 3, Recommended change 1.)",
+     4, "Sec. III-B"),
 
-    ("Reviewer 2: Conclusions about transferability to other cities should align "
-     "with the scope of the available evidence (only Bhopal was analyzed).",
-     "Softened “applicable to other data-scarce Indian cities” (stated as fact) to "
-     "“designed for extension to other data-scarce Indian cities, pending "
-     "independent testing in those settings” in the Abstract and Conclusion.",
-     "", "Abstract; Conclusion"),
+    ("Reviewer 2, Recommended change 1: “The authors should revise the "
+     "manuscript to improve its technical presentation, provide clearer "
+     "mathematical formulations, and substantially enhance the figures and "
+     "maps.”",
+     "All 18 equations are native embedded Word equation objects (proper "
+     "stacked fractions/roots/sums). All 5 figures are dedicated, "
+     "individually captioned, full-page-width dashboards. Manuscript "
+     "reformatted into the official IEEE conference template (named "
+     "paragraph styles, automatic section/figure/reference numbering, "
+     "3-column author block, no author numbering, no hyperlinked emails).",
+     2, "Sec. II-C (equations); Figs. 1-5"),
 
-    ("Reviewers 1 & 2: The choice of k=6 needs a stability analysis across random "
-     "seeds / UMAP settings, and comparison against K-Means applied directly to "
-     "the standardized indicators (no UMAP).",
-     "Added a new stability analysis (Sec. III-B): 10 random seeds and 9 UMAP "
-     "hyperparameter combinations scored against the original labeling via "
-     "Adjusted Rand Index (mean ARI 0.78-0.79); a plain K-Means baseline on the "
-     "raw 5-indicator space (bypassing UMAP) agreed only weakly (ARI=0.29), "
-     "showing UMAP materially reshapes the partition rather than just "
-     "visualizing it.",
-     "", "Sec. III-B"),
+    ("Reviewer 2, Recommended change 2: “They should also strengthen the "
+     "justification for the selected number of clusters, assess clustering "
+     "stability, and clarify the distinction between cluster validation and "
+     "spatial autocorrelation analysis.”",
+     "Stability analysis as above. Reworded the Abstract, Results §III-C and "
+     "Limitations §III-D to state explicitly that the global Moran's I and "
+     "the 62.5% Urban Core/LISA overlap corroborate the UMI surface's "
+     "non-random structure and the Urban Core cluster specifically, and are "
+     "not an independent accuracy assessment of the full six-cluster "
+     "classification.",
+     4, "Sec. III-B, III-C, III-D"),
 
-    ("Reviewer 1: Document the full data/preprocessing workflow -- building-"
-     "footprint provenance, temporal compatibility with WSF 2015, handling of "
-     "empty/singleton cells, assignment of buildings crossing grid boundaries, "
-     "and the effect of clipped boundary-cell areas on count-based comparisons.",
-     "OBF provenance confirmed and stated (Google Open Buildings v3 polygons, 30 "
-     "May 2023 snapshot, CC-BY 4.0/ODbL). Documented that 72/495 cells with no "
-     "buildings are zero-filled before standardization (Sec. II-C). Documented "
-     "that density (not raw count) is the valid basis for comparing clipped "
-     "boundary cells. Confirmed from the authors' own QGIS Processing History "
-     "that buildings are joined via an “intersects” predicate, so a boundary-"
-     "crossing building is attributed in full to every cell it touches -- stated "
-     "explicitly as a limitation.",
-     "", "Sec. II-B, II-C, III-D"),
+    ("Reviewer 2, Recommended change 3: “Conclusions about transferability "
+     "to other cities should align with the scope of the available "
+     "evidence.”",
+     "Softened “applicable to other data-scarce Indian cities” (stated as "
+     "fact) to “designed for extension to other data-scarce Indian cities, "
+     "pending independent testing in those settings” in the Abstract and "
+     "Conclusion.",
+     1, "Abstract (p.1); Conclusion (p.5)"),
 
-    ("Reviewer 3: Data provenance uncertainty -- OBF source/version/imagery date "
-     "unconfirmed; UMI_w weights were reverse-engineered rather than confirmed "
-     "from the original script.",
-     "OBF provenance fully confirmed (see above). UMI_w: checked the QGIS "
-     "Processing History log and the saved .qgz project's field definitions "
-     "(every layer's expressionfields element is empty) and confirmed no stored "
-     "expression exists anywhere recoverable; Eq. (13) is reported explicitly as "
-     "the best available reconstruction (OLS fit, n=423, max residual 0.00046), "
-     "not a confirmed original formula.",
-     "", "Sec. II-B, II-C"),
+    ("Reviewer 3, Recommended change 1: “Run testing with a much finer grid "
+     "scale (e.g., 250m x 250m) to verify that the framework truly captures "
+     "neighborhood-level morphology without excessively averaging out "
+     "heterogeneity.”",
+     "Not performed this round: requires re-aggregating raw building-"
+     "footprint geometry at a new resolution from source data, not retained "
+     "at finer than 1 km in the current data package. Added as a named, "
+     "explicit limitation together with a competing risk (very few buildings "
+     "per cell at 250 m would make variance-based indicators unstable); a "
+     "multi-resolution sensitivity analysis is committed as priority "
+     "follow-up work.",
+     4, "Sec. III-D"),
 
-    ("Reviewer 3 (“fatal flaw”): The 1 km x 1 km grid risks ecological fallacy; "
-     "requested testing at a much finer scale (e.g., 250 m x 250 m).",
-     "Not performed this round: requires re-aggregating raw building-footprint "
-     "geometry at a new resolution from source data, which is not retained at "
-     "finer than 1 km in the current data package. Added as a named, explicit "
-     "limitation together with a competing risk the reviewer's proposal "
-     "introduces (very few buildings per cell at 250 m makes variance-based "
-     "indicators unstable); a multi-resolution sensitivity analysis is committed "
-     "as priority follow-up work.",
-     "", "Sec. III-D"),
+    ("Reviewer 3, Recommended change 2: “Clarify and confirm the source, "
+     "version, and acquisition date of the Open Building Footprints dataset "
+     "used, and refine the data processing flow to eliminate the need for "
+     "reverse-engineering the attributes themselves.”",
+     "OBF source/version/date fully confirmed (Google Open Buildings v3 "
+     "polygons, 30 May 2023 snapshot). UMI_w: checked the QGIS Processing "
+     "History log and the saved .qgz project's field definitions (every "
+     "layer's expressionfields element is empty) and confirmed no stored "
+     "expression exists anywhere recoverable; Eq. (13) is reported "
+     "explicitly as the best available reconstruction, not a confirmed "
+     "original formula.",
+     2, "Sec. II-B (p.2); II-C (p.3)"),
 
-    ("Reviewer 3: Validate the clusters against independent field data (e.g., "
-     "satellite imagery or land-use data) to confirm labels are morphologically, "
-     "not just mathematically, sensible.",
-     "Not performed this round. Added as a named priority for follow-up work in "
-     "Sec. III-D: a stratified visual check of a representative sample of cells "
-     "from each of the six clusters against high-resolution satellite basemap "
+    ("Reviewer 3, Recommended change 3: “Validate the clusters using "
+     "independent field data samples (such as Google Earth satellite "
+     "imagery or land use data) to ensure that the assigned cluster labels "
+     "make sense morphologically, not just mathematically.”",
+     "Not performed this round. Added as a named priority for follow-up work: "
+     "a stratified visual check of a representative sample of cells from "
+     "each of the six clusters against high-resolution satellite basemap "
      "imagery.",
-     "", "Sec. III-D"),
-
-    ("Reviewer 2: Manuscript requires improvement in technical presentation -- "
-     "equation formatting, notation clarity, figure quality.",
-     "All equations are native embedded Word equation objects (proper stacked "
-     "fractions/roots/sums), not unicode-text approximations. All 5 figures are "
-     "dedicated, individually captioned, full-width dashboards. Manuscript "
-     "reformatted into the official IEEE conference template (named paragraph "
-     "styles, automatic section/figure/reference numbering, 3-column author "
-     "block, no author numbering, no hyperlinked emails) per the AGERS "
-     "secretariat's acceptance-email instructions.",
-     "", "Throughout"),
-
-    ("Internal: unconfirmed reference lacking volume/issue/page/DOI "
-     "(Ghosh 2019, Bhopal LULC) -- flagged pre-review, not itself raised by a "
-     "reviewer but affecting reference-list completeness/accuracy.",
-     "Reference removed along with its sole in-text citation (the claim it "
-     "supported was dropped rather than left uncited); all subsequent "
-     "references and every in-text citation number were renumbered and verified "
-     "consistent (11 references total, no gaps).",
-     "", "References"),
+     4, "Sec. III-D"),
 ]
 
 r = header_row + 1
@@ -159,8 +156,17 @@ for i, (comment, revision, page, para) in enumerate(rows, start=1):
     c5.alignment = Alignment(wrap_text=True, vertical="top")
     for col in range(1, 6):
         ws.cell(row=r, column=col).border = border
-    ws.row_dimensions[r].height = 90
+    ws.row_dimensions[r].height = 95
     r += 1
+
+note_row = r + 1
+ws.cell(row=note_row, column=2,
+        value=("Note: page numbers are from the current 8-page camera-ready render. "
+               "Please re-verify against your own PDF eXpress / Word pagination before "
+               "sending, since native equation rendering can shift page breaks slightly."))
+ws.cell(row=note_row, column=2).font = Font(italic=True, size=9)
+ws.cell(row=note_row, column=2).alignment = Alignment(wrap_text=True)
+ws.merge_cells(start_row=note_row, start_column=2, end_row=note_row, end_column=5)
 
 out = "/home/user/Research-and-Academic-work/Bhopal_Urban_Morphology_UMAP/Revision-Form-AGERS2026-1571358824.xlsx"
 wb.save(out)
