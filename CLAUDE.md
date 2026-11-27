@@ -81,3 +81,8 @@ reports area/validation-style metrics:
   explicitly said to reuse as-is.
 - Never fabricate statistics, citations, or DOIs. Flag discrepancies in the
   source data explicitly rather than silently resolving them.
+
+## 4. Ongoing work log
+
+- LULC change in Bhopal 1995–2025 (RF & SVM in QGIS SCP): see
+  `LULC_Bhopal_1995-2025/PROGRESS.md` and update it at the end of each session.
