@@ -42,6 +42,14 @@ Read this first, then ask for a fresh QGIS screenshot.
 - Region-growing ROI settings still at Dist 0.01 / Min 60 / Max 100;
   recommended Min 5–10, Max 10–15 for crops, ~20–30 for forest blocks.
 
+- SVM 1995 (screenshot 27-11-2026): built-up over-prediction even worse than RF
+  (most of the west and north is red); same black lake centre. Barren-land class
+  has no display colour — give it one (e.g. tan/brown) so it is visible.
+- Accuracy plan agreed: fix ROIs first, then assess with QGIS plugin AcATaMa
+  (stratified random sample, ~50+ points per class, blind labelling, same points
+  for RF and SVM). Report OA, PA, UA (+ kappa only as a secondary figure).
+  Target: OA >= 85% (Anderson et al. 1976) with no class badly below.
+
 ## Next steps
 1. Fix 1995 ROIs (barren/fallow vs built-up, deep water) and re-run RF and SVM.
 2. Accuracy assessment with an independent, stratified random reference sample
